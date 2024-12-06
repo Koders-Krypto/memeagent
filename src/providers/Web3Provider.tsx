@@ -20,6 +20,7 @@ import { MockUSDTABI } from '@/abi/MockUSDT'
 
 interface Web3ContextType {
     provider: IProvider | null
+    web3auth: Web3Auth | null
     login: () => Promise<void>
     logout: () => Promise<void>
     getUserInfo: () => Promise<void>
@@ -54,7 +55,7 @@ export function Web3Provider({ children }: { children: React.ReactNode }) {
 
     const router = useRouter()
 
-    const chainConfig = {
+    const baseSepoliaConfig = {
         chainNamespace: CHAIN_NAMESPACES.EIP155,
         chainId: "0x14a34",
         rpcTarget: "https://sepolia.base.org",
@@ -65,12 +66,23 @@ export function Web3Provider({ children }: { children: React.ReactNode }) {
         logo: "https://cryptologos.cc/logos/ethereum-eth-logo.png",
     }
 
+    const litChronicleYellowstoneConfig = {
+        chainNamespace: CHAIN_NAMESPACES.EIP155,
+        chainId: "0x2AC54",
+        rpcTarget: "https://yellowstone-rpc.litprotocol.com/",
+        displayName: "Lit Chronicle Yellowstone",
+        blockExplorerUrl: "https://yellowstone-explorer.litprotocol.com/",
+        ticker: "tstLPX",
+        tickerName: "Lit Protocol",
+        logo: "https://cryptologos.cc/logos/ethereum-eth-logo.png",
+    }
+
     // Initialize Web3Auth instance
     useEffect(() => {
         const init = async () => {
             try {
                 const privateKeyProvider = new EthereumPrivateKeyProvider({
-                    config: { chainConfig },
+                    config: { chainConfig: baseSepoliaConfig, networks: { baseSepoliaConfig, litChronicleYellowstoneConfig } },
                 })
 
                 const web3AuthOptions: Web3AuthOptions = {
@@ -240,6 +252,7 @@ export function Web3Provider({ children }: { children: React.ReactNode }) {
     return (
         <Web3Context.Provider
             value={{
+                web3auth,
                 provider,
                 login,
                 logout,
