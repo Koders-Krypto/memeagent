@@ -8,7 +8,7 @@ import { LitProtocolProvider } from './LitProtocol'
 import { MemeFactoryProvider } from './MemeFactory'
 import { MemeTokenProvider } from './MemeToken'
 import { LiquidityPairProvider } from './LiquidityPair'
-import { ContractsDataProvider } from './ContractsData'
+import { GraphDataProvider } from './GraphData'
 
 export function Providers({ children }: { children: React.ReactNode }) {
     return (
@@ -18,13 +18,13 @@ export function Providers({ children }: { children: React.ReactNode }) {
                     <MemeFactoryProvider>
                         <MemeTokenProvider>
                             <LiquidityPairProvider>
-                                <ContractsDataProvider>
+                                <GraphDataProvider>
                                     <LangChainProvider>
                                         <PWAProvider>
                                             {children}
                                         </PWAProvider>
                                     </LangChainProvider>
-                                </ContractsDataProvider>
+                                </GraphDataProvider>
                             </LiquidityPairProvider>
                         </MemeTokenProvider>
                     </MemeFactoryProvider>

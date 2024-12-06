@@ -65,12 +65,6 @@ export const LiquidityFactoryABI = [
         "internalType": "address",
         "name": "pair",
         "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "pairIndex",
-        "type": "uint256"
       }
     ],
     "name": "PairCreated",

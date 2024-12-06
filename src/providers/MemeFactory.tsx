@@ -16,6 +16,10 @@ interface MemeFactoryContextType {
         usdtAmount: number
     ) => Promise<string>;
     createMemeCointTool: any;
+    getMemeCoinCountTool: any;
+    getMemeCoinCreatorTool: any;
+    getUsdtTokenAddressTool: any;
+    getLiquidityFactoryAddressTool: any;
     isLoading: boolean;
     error: string | null;
 }
@@ -35,7 +39,6 @@ export function MemeFactoryProvider({ children }: { children: ReactNode }) {
         usdtAmount: number
     ) => {
         try {
-            console.log("calling meme creation")
             setIsLoading(true);
             setError(null);
 
@@ -91,10 +94,96 @@ export function MemeFactoryProvider({ children }: { children: ReactNode }) {
         }
     );
 
+    const getMemeCoinCountTool = tool(
+        async () => {
+            if (!provider) {
+                throw new Error('Provider not initialized');
+            }
+            const ethersProvider = new ethers.providers.Web3Provider(provider);
+            const memeFactory = new ethers.Contract(
+                MEME_FACTORY_ADDRESS,
+                MemeCoinFactoryABI,
+                ethersProvider
+            );
+            return (await memeFactory.getMemeCoinCount()).toString();
+        },
+        {
+            name: 'getMemeCoinCount',
+            description: 'Get the total number of meme coins created',
+            schema: z.object({}),
+        }
+    );
+
+    const getMemeCoinCreatorTool = tool(
+        async ({ memeCoin }: { memeCoin: string }) => {
+            if (!provider) {
+                throw new Error('Provider not initialized');
+            }
+            const ethersProvider = new ethers.providers.Web3Provider(provider);
+            const memeFactory = new ethers.Contract(
+                MEME_FACTORY_ADDRESS,
+                MemeCoinFactoryABI,
+                ethersProvider
+            );
+            return await memeFactory.getMemeCoinCreator(memeCoin);
+        },
+        {
+            name: 'getMemeCoinCreator',
+            description: 'Get the creator address for a specific meme coin',
+            schema: z.object({
+                memeCoin: z.string().describe('The address of the meme coin contract'),
+            }),
+        }
+    );
+
+    const getUsdtTokenAddressTool = tool(
+        async () => {
+            if (!provider) {
+                throw new Error('Provider not initialized');
+            }
+            const ethersProvider = new ethers.providers.Web3Provider(provider);
+            const memeFactory = new ethers.Contract(
+                MEME_FACTORY_ADDRESS,
+                MemeCoinFactoryABI,
+                ethersProvider
+            );
+            return await memeFactory.usdtToken();
+        },
+        {
+            name: 'getUsdtTokenAddress',
+            description: 'Get the USDT token address used by the factory',
+            schema: z.object({}),
+        }
+    );
+
+    const getLiquidityFactoryAddressTool = tool(
+        async () => {
+            if (!provider) {
+                throw new Error('Provider not initialized');
+            }
+            const ethersProvider = new ethers.providers.Web3Provider(provider);
+            const memeFactory = new ethers.Contract(
+                MEME_FACTORY_ADDRESS,
+                MemeCoinFactoryABI,
+                ethersProvider
+            );
+            return await memeFactory.liquidityFactory();
+        },
+        {
+            name: 'getLiquidityFactoryAddress',
+            description: 'Get the liquidity factory address used by the contract',
+            schema: z.object({}),
+        }
+    );
+
     return (
         <MemeFactoryContext.Provider value={{
             createMemeCoin,
             createMemeCointTool,
+            getMemeCoinCountTool,
+            getMemeCoinCreatorTool,
+            getUsdtTokenAddressTool,
+            getLiquidityFactoryAddressTool,
             isLoading,
             error,
         }}>

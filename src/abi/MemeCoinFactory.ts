@@ -38,11 +38,6 @@ export const MemeCoinFactoryABI = [
     "type": "error"
   },
   {
-    "inputs": [],
-    "name": "ReentrancyGuardReentrantCall",
-    "type": "error"
-  },
-  {
     "anonymous": false,
     "inputs": [
       {
@@ -78,7 +73,7 @@ export const MemeCoinFactoryABI = [
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "initialMint",
+        "name": "initialSupply",
         "type": "uint256"
       },
       {
@@ -167,7 +162,7 @@ export const MemeCoinFactoryABI = [
       },
       {
         "internalType": "uint256",
-        "name": "initialMint",
+        "name": "initialSupply",
         "type": "uint256"
       },
       {
@@ -180,7 +175,7 @@ export const MemeCoinFactoryABI = [
     "outputs": [
       {
         "internalType": "address",
-        "name": "memeCoin",
+        "name": "",
         "type": "address"
       }
     ],

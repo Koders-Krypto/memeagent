@@ -7,6 +7,7 @@ import { useWeb3Auth } from './Web3Provider'
 import { ToolNode } from "@langchain/langgraph/prebuilt";
 import { getSystemMessages } from '../utils/prompt'
 import { useMemeFactory } from './MemeFactory'
+import { useGraphData } from './GraphData'
 
 interface LangChainContextType {
     app: any
@@ -24,14 +25,15 @@ export const useLangChain = () => {
 
 export function LangChainProvider({ children }: { children: React.ReactNode }) {
 
-    const { provider,
-        getBalance,
-        getAccounts,
-        getChainId, getBalanceTool } = useWeb3Auth();
+    const { getBalanceTool } = useWeb3Auth();
 
-    const { createMemeCointTool } = useMemeFactory();
+    const { fetchMemeCoinsDataTool } = useGraphData();
 
-    const tools = [getBalanceTool, createMemeCointTool];
+    const { createMemeCointTool, getMemeCoinCountTool, getMemeCoinCreatorTool, getUsdtTokenAddressTool, getLiquidityFactoryAddressTool } = useMemeFactory();
+
+    const graphTools = [fetchMemeCoinsDataTool];
+    const contractTools = [getMemeCoinCountTool, getMemeCoinCreatorTool, getUsdtTokenAddressTool, getLiquidityFactoryAddressTool];
+    const tools = [getBalanceTool, createMemeCointTool, ...contractTools, ...graphTools];
 
     const toolNode = new ToolNode(tools);
 
