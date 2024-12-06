@@ -1,9 +1,12 @@
 'use client'
 
+import { useContractsData } from '@/providers/ContractsData'
 import { useWeb3Auth } from '@/providers/Web3Provider'
 
 export default function DashboardPage() {
     const { address, usdBalance } = useWeb3Auth()
+
+    const { memeCoins } = useContractsData()
 
     return (
         <div className="container p-4">
@@ -21,7 +24,11 @@ export default function DashboardPage() {
                 </div>
                 <div className="p-4 border rounded-lg">
                     <h2 className="text-xl font-semibold mb-2">Your Meme Tokens</h2>
-                    <p className="text-gray-600">No tokens created yet</p>
+                    {memeCoins.length > 0 ? (
+                        <p className="text-gray-600">{memeCoins.length} tokens created</p>
+                    ) : (
+                        <p className="text-gray-600">No tokens created yet</p>
+                    )}
                 </div>
                 <div className="p-4 border rounded-lg">
                     <h2 className="text-xl font-semibold mb-2">Recent Activity</h2>
