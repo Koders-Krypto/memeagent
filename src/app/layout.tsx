@@ -1,30 +1,30 @@
-import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
-import './globals.css'
-import { Providers } from '@/providers'
-import { Toaster } from 'react-hot-toast'
-import { InstallPrompt } from '@/components/pwa/InstallPrompt'
+import type { Metadata } from "next";
+import "./globals.css";
+import { Providers } from "@/providers";
+import { Toaster } from "react-hot-toast";
+import { InstallPrompt } from "@/components/pwa/InstallPrompt";
 
-const inter = Inter({ subsets: ['latin'] })
+import Inter from "./fonts/ComicNeue";
 
 export const metadata: Metadata = {
-  title: 'SecurIQ',
-  description: 'Secure and intelligent wallet management',
-  manifest: '/manifest.json',
+  title: "MemeAgent",
+  description:
+    "Revolutionizing memecoin creation, trading, and sniping with AI-powered precision.",
+  manifest: "/manifest.json",
   icons: {
-    icon: '/logo.png',
-    apple: '/logo.png',
+    icon: "/logo.svg",
+    apple: "/logo.svg",
   },
-}
+};
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={Inter.className + " bg-background text-foreground"}>
         <Providers>
           {children}
           <InstallPrompt />
@@ -32,5 +32,5 @@ export default function RootLayout({
         </Providers>
       </body>
     </html>
-  )
+  );
 }
