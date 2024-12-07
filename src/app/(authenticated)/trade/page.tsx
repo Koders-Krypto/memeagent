@@ -66,7 +66,7 @@ export default function TradePage() {
           .map((token: any) => (
             <button
               key={token.symbol}
-              className="w-full p-2 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2"
+              className="w-full p-2 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2 first:rounded-t-lg last:rounded-b-lg"
               onClick={() => {
                 onSelect(token);
                 onClose();

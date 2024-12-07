@@ -97,7 +97,7 @@ export default function SettingsPage() {
         </div>
         <div className="p-4 border border-primary rounded-lg">
           <h2 className="text-xl font-semibold mb-2">App Info</h2>
-          <p className="text-gray-600">Version: {version}</p>
+          <p className="text-gray-600">Version: 1.0.0</p>
           {updateAvailable && (
             <button
               onClick={updateApp}

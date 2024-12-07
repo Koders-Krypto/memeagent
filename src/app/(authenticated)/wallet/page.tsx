@@ -143,9 +143,8 @@ export default function WalletPage() {
               className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
             >
               <RefreshCw
-                className={`w-5 h-5 text-gray-500 ${
-                  balanceLoading ? "animate-spin" : ""
-                }`}
+                className={`w-5 h-5 text-gray-500 ${balanceLoading ? "animate-spin" : ""
+                  }`}
               />
             </button>
           </div>
@@ -220,7 +219,7 @@ export default function WalletPage() {
               initial={{ y: 100 }}
               animate={{ y: 0 }}
               exit={{ y: 100 }}
-              className="send-modal w-full max-w-md"
+              className="send-modal w-full max-w-md bg-background border border-primary"
             >
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-xl font-bold">Send ETH</h3>
@@ -307,7 +306,7 @@ export default function WalletPage() {
               initial={{ y: 100 }}
               animate={{ y: 0 }}
               exit={{ y: 100 }}
-              className="send-modal w-full max-w-md"
+              className="send-modal w-full max-w-md bg-background border border-primary"
             >
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-xl font-bold">Receive ETH</h3>

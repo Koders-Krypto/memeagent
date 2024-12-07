@@ -30,17 +30,15 @@ main {
 
 .send-modal {
   position: fixed;
-  bottom: calc(64px + env(safe-area-inset-bottom));
-  left: 16px;
-  right: 16px;
-  background: var(--background);
+  bottom: calc(92px + env(safe-area-inset-bottom));
+
   border-top-left-radius: 16px;
   border-top-right-radius: 16px;
   z-index: 40;
   padding: 20px;
   max-height: calc(100vh - 64px - env(safe-area-inset-bottom) - 20px);
   overflow-y: auto;
-  border: 1px solid var(--card-border);
+
   width: calc(100% - 32px);
   max-width: 28rem;
   margin: 0 auto;
