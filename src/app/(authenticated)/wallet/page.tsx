@@ -154,10 +154,10 @@ export default function WalletPage() {
             {balanceLoading ? (
               <Loader2 className="w-6 h-6 animate-spin" />
             ) : (
-              <>
+              <div className="flex flex-row justify-start items-end gap-2">
                 <span>{balance}</span>
-                <span className="balance-currency">ETH</span>
-              </>
+                <span className="balance-currency mb-2">ETH</span>
+              </div>
             )}
           </div>
         </motion.div>

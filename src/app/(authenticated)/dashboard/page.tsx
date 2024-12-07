@@ -51,7 +51,7 @@ export default function DashboardPage() {
           <p className="text-gray-600 text-xl font-bold">{usdBalance} USDT</p>
         </div>
         <div className="p-4 border border-primary rounded-lg">
-          <h2 className="text-base font-semibold mb-2">Your Meme Tokens</h2>
+          <h2 className="text-base font-semibold mb-2">Total Memes Created</h2>
           {memeCoinsData && memeCoinsData.memeCoins.length > 0 ? (
             <p className="text-gray-600 text-xl font-bold">
               {memeCoinsData.memeCoins.length} tokens created

@@ -24,7 +24,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={Inter.className + " bg-background text-foreground"}>
+      <body
+        className={
+          Inter.className +
+          " bg-background text-foreground max-w-xl mx-auto md:border-x border-primary"
+        }
+      >
         <Providers>
           {children}
           <InstallPrompt />
