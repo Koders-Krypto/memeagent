@@ -20,18 +20,6 @@ export default function LoginPage() {
     }
   }, [initialized, isAuthenticated, loggedIn, address, router]);
 
-  if (!initialized) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <Loader2 className="animate-spin h-8 w-8 text-primary" />
-      </div>
-    );
-  }
-
-  if (isAuthenticated && loggedIn && address) {
-    return null;
-  }
-
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-b relative">
       <motion.div
@@ -56,7 +44,7 @@ export default function LoginPage() {
             onClick={login}
             className=" px-6 py-3 bg-primary text-black font-bold text-xl rounded-lg"
           >
-            Connect Wallet
+            {initialized ? "Connect Wallet" : <Loader2 className="animate-spin h-8 w-8 text-primary" />}
           </button>
         </div>
       </motion.div>
