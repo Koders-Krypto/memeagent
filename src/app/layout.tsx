@@ -15,6 +15,36 @@ export const metadata: Metadata = {
     icon: "/logo.svg",
     apple: "/logo.svg",
   },
+  openGraph: {
+    title: "MemeAgent",
+    url: "https://memeagent.club/",
+    description: "MemeAgent",
+    images: [
+      {
+        url: "https://memeagent.club/og-image.png",
+        secureUrl: "https://memeagent.club/og-image.png",
+        alt: "MemeAgent",
+        width: 1200,
+        height: 630,
+        type: "image/png",
+      },
+    ],
+    locale: "en-US",
+    type: "website",
+  },
+  alternates: {
+    canonical: "https://memeagent.club/",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "MemeAgent",
+    description: "MemeAgent",
+    creator: "@MemeAgent",
+    images: ["https://memeagent.club/og-image.png"],
+  },
+  robots: {
+    index: true,
+  },
 };
 
 export default function RootLayout({
