@@ -219,7 +219,7 @@ export function Web3Provider({ children }: { children: React.ReactNode }) {
         if (!provider || !address) return;
         try {
             const ethersProvider = new ethers.providers.Web3Provider(provider);
-            const usdtAddress = "0xAE86Da538f1bA5e4ff5e5367f4BBccc40e651247";
+            const usdtAddress = "0x65E433162535b4d0cF34a8630684fC3211ce1EE9";
             const contract = new ethers.Contract(usdtAddress, MockUSDTABI, ethersProvider);
             const balance = await contract.balanceOf(address);
             const formattedBalance = ethers.utils.formatUnits(balance, 18);

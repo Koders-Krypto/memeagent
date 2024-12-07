@@ -61,7 +61,7 @@ export function LitProtocolProvider({ children }: { children: ReactNode }) {
             debug: true
         });
         await litContracts.connect();
-        
+
         // const pkpInfo = (await litContracts.pkpNftContractUtils.write.mint()).pkp;
 
         const sessionSigs = await litNodeClient.getSessionSigs({
@@ -73,15 +73,15 @@ export function LitProtocolProvider({ children }: { children: ReactNode }) {
                 //     ability: LIT_ABILITY.PKPSigning,
                 // },
                 {
-                  resource: new LitActionResource("*"),
-                  ability: LIT_ABILITY.LitActionExecution,
+                    resource: new LitActionResource("*"),
+                    ability: LIT_ABILITY.LitActionExecution,
                 },
             ],
             authNeededCallback: async ({
                 uri,
                 expiration,
                 resourceAbilityRequests,
-                }) => {
+            }) => {
                 const toSign = await createSiweMessage({
                     uri,
                     expiration,
@@ -90,7 +90,7 @@ export function LitProtocolProvider({ children }: { children: ReactNode }) {
                     nonce: await litNodeClient.getLatestBlockhash(),
                     litNodeClient,
                 });
-        
+
                 return await generateAuthSig({
                     signer: signer,
                     toSign,
@@ -107,7 +107,7 @@ export function LitProtocolProvider({ children }: { children: ReactNode }) {
         const { signer, litContracts, sessionSigs } = await getSessionSigs(hoursValid);
         console.log(sessionSigs)
 
-        
+
         const toSign = await createSiweMessageWithRecaps({
             uri: window.location.href,
             expiration: new Date(Date.now() + 1000 * 60 * 10).toISOString(), // 10 minutes
@@ -145,7 +145,7 @@ export function LitProtocolProvider({ children }: { children: ReactNode }) {
 
         const litAction = `
             const go = async () => {
-            const contractAddress = "0x0C58c60263949b7bDb0ae49081e6DD629df69459";
+            const contractAddress = "0xb67444e08b5182549Cf1921F2EF63DC3D8b32eed";
             const abi = [
                 {
                     "inputs": [

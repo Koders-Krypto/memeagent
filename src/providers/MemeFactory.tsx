@@ -4,8 +4,9 @@ import { useWeb3Auth } from './Web3Provider';
 import { MemeCoinFactoryABI } from '../abi/MemeCoinFactory';
 import { tool } from '@langchain/core/tools';
 import { z } from 'zod';
+import { MockUSDTABI } from '@/abi/MockUSDT';
 
-const MEME_FACTORY_ADDRESS = '0x0C58c60263949b7bDb0ae49081e6DD629df69459';
+const MEME_FACTORY_ADDRESS = '0xb67444e08b5182549Cf1921F2EF63DC3D8b32eed';
 
 interface MemeFactoryContextType {
     createMemeCoin: (
@@ -46,29 +47,56 @@ export function MemeFactoryProvider({ children }: { children: ReactNode }) {
                 throw new Error('Provider not initialized');
             }
 
-            const ethersProvider = new ethers.providers.Web3Provider(provider);
-            const signer = ethersProvider.getSigner();
-            const memeFactory = new ethers.Contract(
-                MEME_FACTORY_ADDRESS,
-                MemeCoinFactoryABI,
-                signer
-            );
+            try {
 
-            const tx = await memeFactory.createMemeCoin(
-                name,
-                symbol,
-                ethers.utils.parseEther(maxSupply.toString()),
-                ethers.utils.parseEther(initialMint.toString()),
-                ethers.utils.parseEther(usdtAmount.toString())
-            );
-            const receipt = await tx.wait();
 
-            const event = receipt.events?.find(
-                (event: any) => event.event === 'MemeCoinCreated'
-            );
-            const memeCoinAddress = event?.args?.memeCoin;
+                const ethersProvider = new ethers.providers.Web3Provider(provider);
+                const signer = ethersProvider.getSigner();
 
-            return memeCoinAddress || receipt.transactionHash;
+                const approveContract = new ethers.Contract(
+                    "0x65E433162535b4d0cF34a8630684fC3211ce1EE9",
+                    MockUSDTABI,
+                    signer
+                )
+
+                console.log("approveContract", approveContract)
+
+                const approveTx = await approveContract.approve(
+                    MEME_FACTORY_ADDRESS,
+                    ethers.utils.parseEther(usdtAmount.toString())
+                )
+
+                console.log("approveTx", approveTx)
+
+                const approveReceipt = await approveTx.wait();
+
+                console.log("approveReceipt", approveReceipt)
+
+                const memeFactory = new ethers.Contract(
+                    MEME_FACTORY_ADDRESS,
+                    MemeCoinFactoryABI,
+                    signer
+                );
+
+                const tx = await memeFactory.createMemeCoin(
+                    name,
+                    symbol,
+                    ethers.utils.parseEther(maxSupply.toString()),
+                    ethers.utils.parseEther(initialMint.toString()),
+                    ethers.utils.parseEther(usdtAmount.toString())
+                );
+                const receipt = await tx.wait();
+
+                const event = receipt.events?.find(
+                    (event: any) => event.event === 'MemeCoinCreated'
+                );
+                const memeCoinAddress = event?.args?.memeCoin;
+
+                return memeCoinAddress || receipt.transactionHash;
+            }
+            catch (err: any) {
+                console.log("error", err)
+            }
         } catch (err: any) {
             setError(err.message);
             throw err;
