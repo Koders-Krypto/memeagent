@@ -1,12 +1,30 @@
 'use client'
 
 import { useGraphData } from '@/providers/GraphData'
+import { useMemeFactory } from '@/providers/MemeFactory'
 import { useWeb3Auth } from '@/providers/Web3Provider'
+import { useEffect, useState } from 'react'
 
 export default function DashboardPage() {
     const { address, usdBalance } = useWeb3Auth()
 
     const { memeCoins: memeCoinsData } = useGraphData()
+
+    const [memeCoinCount, setMemeCoinCount] = useState(0);
+
+    const { provider } = useWeb3Auth()
+
+    const { getMemeCoinCount } = useMemeFactory();
+
+    useEffect(() => {
+        if (!provider) {
+            return;
+        }
+        getMemeCoinCount().then((count) => {
+            console.log("meme count", count)
+            setMemeCoinCount(parseInt(count));
+        });
+    }, [provider]);
 
     return (
         <div className="container p-4">
@@ -27,7 +45,7 @@ export default function DashboardPage() {
                     {memeCoinsData && memeCoinsData.memeCoins.length > 0 ? (
                         <p className="text-gray-600">{memeCoinsData.memeCoins.length} tokens created</p>
                     ) : (
-                        <p className="text-gray-600">No tokens created yet</p>
+                        <p className="text-gray-600">{memeCoinCount} tokens created</p>
                     )}
                 </div>
                 <div className="p-4 border rounded-lg">

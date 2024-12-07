@@ -17,6 +17,10 @@ interface MemeFactoryContextType {
         initialMint: number,
         usdtAmount: number
     ) => Promise<string>;
+    getMemeCoinCount: () => Promise<string>;
+    getMemeCoinCreator: (memeCoin: string) => Promise<string>;
+    getUsdtTokenAddress: () => Promise<string>;
+    getLiquidityFactoryAddress: () => Promise<string>;
     createMemeCointTool: any;
     getMemeCoinCountTool: any;
     getMemeCoinCreatorTool: any;
@@ -123,18 +127,61 @@ export function MemeFactoryProvider({ children }: { children: ReactNode }) {
         }
     );
 
+    const getMemeCoinCount = async () => {
+        if (!provider) {
+            return 0;
+        }
+        const ethersProvider = new ethers.providers.Web3Provider(provider);
+        const memeFactory = new ethers.Contract(
+            MEME_FACTORY_ADDRESS,
+            MemeCoinFactoryABI,
+            ethersProvider
+        );
+        return (await memeFactory.getMemeCoinCount()).toString();
+    };
+
+    const getMemeCoinCreator = async (memeCoin: string) => {
+        if (!provider) {
+            throw new Error('Provider not initialized');
+        }
+        const ethersProvider = new ethers.providers.Web3Provider(provider);
+        const memeFactory = new ethers.Contract(
+            MEME_FACTORY_ADDRESS,
+            MemeCoinFactoryABI,
+            ethersProvider
+        );
+        return await memeFactory.getMemeCoinCreator(memeCoin);
+    };
+
+    const getUsdtTokenAddress = async () => {
+        if (!provider) {
+            throw new Error('Provider not initialized');
+        }
+        const ethersProvider = new ethers.providers.Web3Provider(provider);
+        const memeFactory = new ethers.Contract(
+            MEME_FACTORY_ADDRESS,
+            MemeCoinFactoryABI,
+            ethersProvider
+        );
+        return await memeFactory.usdtToken();
+    };
+
+    const getLiquidityFactoryAddress = async () => {
+        if (!provider) {
+            throw new Error('Provider not initialized');
+        }
+        const ethersProvider = new ethers.providers.Web3Provider(provider);
+        const memeFactory = new ethers.Contract(
+            MEME_FACTORY_ADDRESS,
+            MemeCoinFactoryABI,
+            ethersProvider
+        );
+        return await memeFactory.liquidityFactory();
+    };
+
     const getMemeCoinCountTool = tool(
         async () => {
-            if (!provider) {
-                throw new Error('Provider not initialized');
-            }
-            const ethersProvider = new ethers.providers.Web3Provider(provider);
-            const memeFactory = new ethers.Contract(
-                MEME_FACTORY_ADDRESS,
-                MemeCoinFactoryABI,
-                ethersProvider
-            );
-            return (await memeFactory.getMemeCoinCount()).toString();
+            return await getMemeCoinCount();
         },
         {
             name: 'getMemeCoinCount',
@@ -145,16 +192,7 @@ export function MemeFactoryProvider({ children }: { children: ReactNode }) {
 
     const getMemeCoinCreatorTool = tool(
         async ({ memeCoin }: { memeCoin: string }) => {
-            if (!provider) {
-                throw new Error('Provider not initialized');
-            }
-            const ethersProvider = new ethers.providers.Web3Provider(provider);
-            const memeFactory = new ethers.Contract(
-                MEME_FACTORY_ADDRESS,
-                MemeCoinFactoryABI,
-                ethersProvider
-            );
-            return await memeFactory.getMemeCoinCreator(memeCoin);
+            return await getMemeCoinCreator(memeCoin);
         },
         {
             name: 'getMemeCoinCreator',
@@ -167,16 +205,7 @@ export function MemeFactoryProvider({ children }: { children: ReactNode }) {
 
     const getUsdtTokenAddressTool = tool(
         async () => {
-            if (!provider) {
-                throw new Error('Provider not initialized');
-            }
-            const ethersProvider = new ethers.providers.Web3Provider(provider);
-            const memeFactory = new ethers.Contract(
-                MEME_FACTORY_ADDRESS,
-                MemeCoinFactoryABI,
-                ethersProvider
-            );
-            return await memeFactory.usdtToken();
+            return await getUsdtTokenAddress();
         },
         {
             name: 'getUsdtTokenAddress',
@@ -187,16 +216,7 @@ export function MemeFactoryProvider({ children }: { children: ReactNode }) {
 
     const getLiquidityFactoryAddressTool = tool(
         async () => {
-            if (!provider) {
-                throw new Error('Provider not initialized');
-            }
-            const ethersProvider = new ethers.providers.Web3Provider(provider);
-            const memeFactory = new ethers.Contract(
-                MEME_FACTORY_ADDRESS,
-                MemeCoinFactoryABI,
-                ethersProvider
-            );
-            return await memeFactory.liquidityFactory();
+            return await getLiquidityFactoryAddress();
         },
         {
             name: 'getLiquidityFactoryAddress',
@@ -208,6 +228,10 @@ export function MemeFactoryProvider({ children }: { children: ReactNode }) {
     return (
         <MemeFactoryContext.Provider value={{
             createMemeCoin,
+            getMemeCoinCount,
+            getMemeCoinCreator,
+            getUsdtTokenAddress,
+            getLiquidityFactoryAddress,
             createMemeCointTool,
             getMemeCoinCountTool,
             getMemeCoinCreatorTool,
