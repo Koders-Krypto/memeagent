@@ -241,7 +241,7 @@ Let's cook something legendary! What kind of meme magic shall we create today? ð
                     <div
                       className={`flex-1 max-w-full rounded-2xl break-words ${
                         message.role !== "human"
-                          ? "bg-gray-700 p-4 text-white rounded-tr-none"
+                          ? "bg-gray-700 p-4 text-white rounded-tl-none"
                           : "rounded-tl-none text-right"
                       }`}
                     >
@@ -263,8 +263,8 @@ Let's cook something legendary! What kind of meme magic shall we create today? ð
                   <Image
                     src="/agent.svg"
                     alt="Meme Agent"
-                    width={12}
-                    height={12}
+                    width={20}
+                    height={20}
                     className="opacity-50"
                   />
                   <p>Ask me anything about MemeAgent</p>
