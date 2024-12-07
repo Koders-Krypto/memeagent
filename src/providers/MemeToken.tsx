@@ -4,6 +4,8 @@ import { useWeb3Auth } from './Web3Provider';
 import { MemeCoinABI } from '../abi/MemeCoin';
 import { tool } from '@langchain/core/tools';
 import { z } from 'zod';
+import { getChainConfig } from '../utils/config';
+import { MemeCoinFactoryABI } from '@/abi/MemeCoinFactory';
 
 interface MemeTokenContextType {
     approve: (
@@ -67,6 +69,7 @@ interface MemeTokenContextType {
     getTokenInfoTool: any;
     transferFromTool: any;
     decimalsTool: any;
+    getListOfMemeTokensTool: any;
 }
 
 const MemeTokenContext = createContext<MemeTokenContextType | null>(null);
@@ -259,6 +262,29 @@ export function MemeTokenProvider({ children }: { children: ReactNode }) {
         }
     };
 
+    const getListOfMemeTokens = async () => {
+        if (!provider) {
+            throw new Error('Provider not initialized');
+        }
+        console.log("getListOfMemeTokens", getChainConfig().MEME_FACTORY_ADDRESS)
+        const ethersProvider = new ethers.providers.Web3Provider(provider);
+        const signer = ethersProvider.getSigner();
+        const contract = new ethers.Contract(getChainConfig().MEME_FACTORY_ADDRESS, MemeCoinFactoryABI, signer);
+        const results = await contract.allMemeCoinTokens();
+        console.log("results", results)
+        return results;
+    };
+
+    const getListOfMemeTokensTool = tool(
+        async () => {
+            return await getListOfMemeTokens();
+        },
+        {
+            name: 'getListOfMemeTokens',
+            description: 'Get the list of all meme tokens',
+        }
+    );
+
 
     const approveTool = tool(
         async ({ tokenAddress, spender, amount }: { tokenAddress: string; spender: string; amount: number }) => {
@@ -423,6 +449,7 @@ export function MemeTokenProvider({ children }: { children: ReactNode }) {
         getTokenInfoTool,
         transferFromTool,
         decimalsTool,
+        getListOfMemeTokensTool,
     };
 
     return (

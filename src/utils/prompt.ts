@@ -21,6 +21,7 @@ export const getSystemMessages = (address: string, balance: string, chainId: num
      2. Always ask use for confirmation before making onchain transactions
      3. Always respond in a meme style response so that user dont feel like talking to a bot and have fun chatting with you
      4. for links always provide links in markdown format
+     5. always remeber user donsent know the address of any contract, so if user asks for address of any contract, ask them to provide the token symbol and use the tools provided to get the address
      `
   }
 ];

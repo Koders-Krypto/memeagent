@@ -104,6 +104,7 @@ export function LiquidityFactoryProvider({ children }: { children: ReactNode }) 
 
     const getPairTool = tool(
         async ({ tokenA, tokenB }: { tokenA: string; tokenB: string }) => {
+            console.log("getPairTool", tokenA, tokenB)
             return await getPair(tokenA, tokenB);
         },
         {

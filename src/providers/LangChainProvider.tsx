@@ -31,13 +31,13 @@ export function LangChainProvider({ children }: { children: React.ReactNode }) {
     const { getBalanceTool } = useWeb3Auth();
     const { fetchMemeCoinsDataTool } = useGraphData();
     const { createMemeCointTool, getMemeCoinCountTool, getMemeCoinCreatorTool, getUsdtTokenAddressTool, getLiquidityFactoryAddressTool } = useMemeFactory();
-    const { approveTool, getTokenInfoTool, transferTool, balanceOfTool, mintTool, burnTool, transferFromTool, decimalsTool } = useMemeToken();
+    const { approveTool, getTokenInfoTool, getListOfMemeTokensTool, transferTool, balanceOfTool, mintTool, burnTool, transferFromTool, decimalsTool } = useMemeToken();
     const { getQuoteTool } = useLiquidityPair();
 
     const { getPairTool } = useLiquidityFactory();
 
     const graphTools = [fetchMemeCoinsDataTool];
-    const memeTokenTools = [getTokenInfoTool, approveTool, transferTool, balanceOfTool, mintTool, burnTool, transferFromTool, decimalsTool];
+    const memeTokenTools = [getTokenInfoTool, approveTool, transferTool, balanceOfTool, mintTool, burnTool, transferFromTool, decimalsTool, getListOfMemeTokensTool];
     const contractTools = [getMemeCoinCountTool, getMemeCoinCreatorTool, getUsdtTokenAddressTool, getLiquidityFactoryAddressTool];
     const liquidityPairTools = [getQuoteTool];
     const liquidityFactoryTools = [getPairTool];
@@ -46,7 +46,7 @@ export function LangChainProvider({ children }: { children: React.ReactNode }) {
     const toolNode = new ToolNode(tools);
 
     const model = new ChatOpenAI({
-        model: "gpt-4o-mini",
+        model: "gpt-4",
         temperature: 0,
         apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
     }).bindTools(tools);
@@ -55,6 +55,7 @@ export function LangChainProvider({ children }: { children: React.ReactNode }) {
         const { messages } = state;
         const lastMessage = messages[messages.length - 1];
         if ("tool_calls" in lastMessage && Array.isArray(lastMessage.tool_calls) && lastMessage.tool_calls?.length) {
+            console.log("tool_calls", lastMessage.tool_calls)
             return "tools";
         }
         return END;
