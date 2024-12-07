@@ -32,7 +32,7 @@ export default function AuthenticatedLayout({
         }
 
         if (provider && !loggedIn) {
-          router.push("/login");
+          router.push("/");
         }
       } catch (error) {
         console.error("Failed to check auth:", error);

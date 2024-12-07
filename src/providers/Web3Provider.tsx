@@ -152,11 +152,11 @@ export function Web3Provider({ children }: { children: React.ReactNode }) {
             setLoggedIn(false)
             setAddress(null)
             useAuthStore.getState().logout()
-            router.push("/login")
+            router.push("/")
         } catch (error) {
             console.error(error)
             toast.error('Failed to logout')
-            router.push("/login")
+            router.push("/")
         }
     }
 

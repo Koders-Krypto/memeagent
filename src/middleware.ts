@@ -18,7 +18,7 @@ export function middleware(request: NextRequest) {
     }
 
     // Public paths that don't require authentication
-    const publicPaths = ['/login']
+    const publicPaths = ['/']
 
     // Protected paths that require authentication
     const protectedPaths = ['/dashboard', '/tokens', '/create', '/wallet', '/settings']
@@ -32,16 +32,16 @@ export function middleware(request: NextRequest) {
         if (isAuthenticated) {
             return NextResponse.redirect(new URL('/dashboard', request.url))
         }
-        return NextResponse.redirect(new URL('/login', request.url))
+        return NextResponse.redirect(new URL('/', request.url))
     }
 
     // Protected routes when not authenticated
     if (protectedPaths.includes(currentPath) && !isAuthenticated) {
-        return NextResponse.redirect(new URL('/login', request.url))
+        return NextResponse.redirect(new URL('/', request.url))
     }
 
     // Login page when already authenticated
-    if (pathname === '/login' && isAuthenticated) {
+    if (pathname === '/' && isAuthenticated) {
         return NextResponse.redirect(new URL('/dashboard', request.url))
     }
 

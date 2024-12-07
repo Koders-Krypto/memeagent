@@ -21,10 +21,11 @@ export default function SettingsPage() {
       setIsLoggingOut(true);
       await logout();
       toast.success("Logged out successfully");
-      router.replace("/login");
+      router.replace("/");
     } catch (error) {
       console.error("Logout error:", error);
-      toast.error("Failed to logout");
+      // toast.error("Failed to logout");
+      router.replace("/");
     } finally {
       setIsLoggingOut(false);
     }
@@ -58,33 +59,30 @@ export default function SettingsPage() {
               <div className="flex space-x-2">
                 <button
                   onClick={() => setTheme("light")}
-                  className={`p-2 rounded-lg flex items-center space-x-1 ${
-                    theme === "light"
-                      ? "bg-primary text-black"
-                      : "bg-gray-100 text-black"
-                  }`}
+                  className={`p-2 rounded-lg flex items-center space-x-1 ${theme === "light"
+                    ? "bg-primary text-black"
+                    : "bg-gray-100 text-black"
+                    }`}
                 >
                   <Sun size={16} />
                   <span>Light</span>
                 </button>
                 <button
                   onClick={() => setTheme("dark")}
-                  className={`p-2 rounded-lg flex items-center space-x-1 ${
-                    theme === "dark"
-                      ? "bg-primary text-black"
-                      : "bg-gray-100 text-black"
-                  }`}
+                  className={`p-2 rounded-lg flex items-center space-x-1 ${theme === "dark"
+                    ? "bg-primary text-black"
+                    : "bg-gray-100 text-black"
+                    }`}
                 >
                   <Moon size={16} />
                   <span>Dark</span>
                 </button>
                 <button
                   onClick={() => setTheme("system")}
-                  className={`p-2 rounded-lg flex items-center space-x-1 ${
-                    theme === "system"
-                      ? "bg-primary text-black"
-                      : "bg-gray-100 text-black"
-                  }`}
+                  className={`p-2 rounded-lg flex items-center space-x-1 ${theme === "system"
+                    ? "bg-primary text-black"
+                    : "bg-gray-100 text-black"
+                    }`}
                 >
                   <Monitor size={16} />
                   <span>System</span>
