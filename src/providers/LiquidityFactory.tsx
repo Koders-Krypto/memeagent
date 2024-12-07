@@ -116,7 +116,7 @@ export function LiquidityFactoryProvider({ children }: { children: ReactNode }) 
             name: 'getPair',
             description: 'Get the address of an existing liquidity pair',
             schema: z.object({
-                tokenA: z.string().describe('The address of the meme token'),
+                tokenA: z.string().describe('The smart contract address of the meme token'),
             }),
         }
     );

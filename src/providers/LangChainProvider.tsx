@@ -48,7 +48,7 @@ export function LangChainProvider({ children }: { children: React.ReactNode }) {
     const toolNode = new ToolNode(tools);
 
     const model = new ChatOpenAI({
-        model: "gpt-4o-mini",
+        model: "gpt-4o",
         temperature: 0,
         apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
     }).bindTools(tools);
