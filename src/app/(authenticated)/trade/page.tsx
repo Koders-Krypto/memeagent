@@ -6,8 +6,31 @@ import { ArrowUpDownIcon } from "lucide-react";
 const tokens = [
   { symbol: "ETH", name: "Ethereum", balance: "0.5", url: "/images/eth.png" },
   { symbol: "USDT", name: "Tether", balance: "1800.00", url: "/images/usdt.png" },
-  { symbol: "BTC", name: "Bitcoin", balance: "0.02", url: "/images/btc.png" },
   { symbol: "USDC", name: "USD Coin", balance: "2000.00", url: "/images/usdc.png" },
+  {
+    symbol: "Dodge",
+    name: "Dodge Count",
+    balance: "1000000",
+    url: "/images/dodge.png",
+  },
+  {
+    symbol: "pepe",
+    name: "Pepe Count",
+    balance: "1000000",
+    url: "/images/pepe.png",
+  },
+  {
+    symbol: "shiba",
+    name: "Shiba Count",
+    balance: "1000000",
+    url: "/images/shiba.png",
+  },
+  {
+    symbol: "virtuals",
+    name: "Virtuals",
+    balance: "1000000",
+    url: "/images/virtuals.png",
+  },
 ];
 
 export default function TradePage() {
