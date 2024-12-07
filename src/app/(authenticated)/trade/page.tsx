@@ -87,6 +87,13 @@ export default function TradePage() {
     );
   };
 
+  const calculateRate = () => {
+    const fromBalance = parseFloat(fromToken.balance);
+    const toBalance = parseFloat(toToken.balance);
+    const rate = toBalance / fromBalance;
+    return `1 ${fromToken.symbol} = ${rate.toLocaleString(undefined, { maximumFractionDigits: 2 })} ${toToken.symbol}`;
+  };
+
   return (
     <div className="w-full p-4">
       <h1 className="text-2xl font-bold mb-4">Trade</h1>
@@ -184,7 +191,7 @@ export default function TradePage() {
             <div className="p-3 space-y-2 bg-gray-50 dark:bg-gray-700 rounded-lg text-sm">
               <div className="flex justify-between">
                 <span className="text-gray-600 dark:text-gray-400">Rate</span>
-                <span>1 ETH = 1,800 USDT</span>
+                <span>{calculateRate()}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600 dark:text-gray-400">Slippage</span>
