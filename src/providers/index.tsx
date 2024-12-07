@@ -15,23 +15,23 @@ export function Providers({ children }: { children: React.ReactNode }) {
     return (
         <ThemeProvider>
             <Web3Provider>
-                <LitProtocolProvider>
-                    <MemeFactoryProvider>
-                        <MemeTokenProvider>
-                            <LiquidityPairProvider>
-                                <LiquidityFactoryProvider>
-                                    <GraphDataProvider>
+                <MemeFactoryProvider>
+                    <MemeTokenProvider>
+                        <LiquidityPairProvider>
+                            <LiquidityFactoryProvider>
+                                <GraphDataProvider>
+                                    <LitProtocolProvider>
                                         <LangChainProvider>
                                             <PWAProvider>
                                                 {children}
                                             </PWAProvider>
                                         </LangChainProvider>
-                                    </GraphDataProvider>
-                                </LiquidityFactoryProvider>
-                            </LiquidityPairProvider>
-                        </MemeTokenProvider>
-                    </MemeFactoryProvider>
-                </LitProtocolProvider>
+                                    </LitProtocolProvider>
+                                </GraphDataProvider>
+                            </LiquidityFactoryProvider>
+                        </LiquidityPairProvider>
+                    </MemeTokenProvider>
+                </MemeFactoryProvider>
             </Web3Provider>
         </ThemeProvider>
     )

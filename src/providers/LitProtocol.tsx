@@ -15,6 +15,8 @@ import { CHAIN_NAMESPACES } from '@web3auth/base';
 import { getChainConfig } from '@/utils/config';
 import { tool } from '@langchain/core/tools';
 import { z } from 'zod';
+import { useMemeFactory } from './MemeFactory';
+
 interface LitContextType {
     litNodeClient: LitNodeClient | null;
     createMemeTokenTool: any;
@@ -25,6 +27,7 @@ const LitContext = createContext<LitContextType | undefined>(undefined);
 
 export function LitProtocolProvider({ children }: { children: ReactNode }) {
     const [litNodeClient, setLitNodeClient] = useState<LitNodeClient | null>(null);
+    const { getMemeCoinAddressTool } = useMemeFactory();
 
     const { web3auth, provider, address } = useWeb3Auth();
 
@@ -240,12 +243,16 @@ export function LitProtocolProvider({ children }: { children: ReactNode }) {
                 ethAddress: mintInfo.pkp.ethAddress,
             }
         });
-        console.log(result);
+
+        const memeCoinAddress = await getMemeCoinAddressTool(tokenName, symbol, parseInt(maxSupply), parseInt(initialMint), parseInt(usdtAmount));
+
+        console.log(memeCoinAddress);
+        return memeCoinAddress;
     };
 
     const createMemeTokenTool = tool(
         async ({ tokenName, symbol, maxSupply, initialMint }) => {
-            await createMemeToken(tokenName, symbol, ethers.utils.parseUnits(maxSupply, 18).toString(), ethers.utils.parseUnits(initialMint, 18).toString(), ethers.utils.parseUnits("1", 18).toString());
+            return await createMemeToken(tokenName, symbol, ethers.utils.parseUnits(maxSupply, 18).toString(), ethers.utils.parseUnits(initialMint, 18).toString(), ethers.utils.parseUnits("1", 18).toString());
         },
         {
             name: "create_meme_token",

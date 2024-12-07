@@ -43,7 +43,7 @@ export function LangChainProvider({ children }: { children: React.ReactNode }) {
     const contractTools = [getMemeCoinCountTool, getMemeCoinCreatorTool, getUsdtTokenAddressTool, getLiquidityFactoryAddressTool];
     const liquidityPairTools = [getQuoteTool, swapTool, getLiquidityTool, checkAllowanceTool];
     const liquidityFactoryTools = [getPairTool];
-    const tools = [getBalanceTool, createMemeTokenTool, mintUsdtTool, ...contractTools, ...graphTools, ...memeTokenTools, ...liquidityPairTools, ...liquidityFactoryTools];
+    const tools = [getBalanceTool, createMemeCointTool, mintUsdtTool, ...contractTools, ...graphTools, ...memeTokenTools, ...liquidityPairTools, ...liquidityFactoryTools];
 
     const toolNode = new ToolNode(tools);
 
