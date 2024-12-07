@@ -35,7 +35,7 @@ const makeLinksClickable = (text: string) => {
                     rel="noopener noreferrer"
                     className="text-blue-400 hover:text-blue-500 underline"
                 >
-                    {part}
+                    View Transaction
                 </a>
             );
         }
