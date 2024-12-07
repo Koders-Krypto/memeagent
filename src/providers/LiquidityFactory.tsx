@@ -150,7 +150,6 @@ export function LiquidityFactoryProvider({ children }: { children: ReactNode }) 
     );
 }
 
-// Custom hook to use the LiquidityFactory context
 export function useLiquidityFactory() {
     const context = useContext(LiquidityFactoryContext);
     if (!context) {
