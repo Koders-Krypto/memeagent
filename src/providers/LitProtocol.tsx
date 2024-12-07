@@ -12,6 +12,7 @@ import { LitContracts } from "@lit-protocol/contracts-sdk";
 import { ethers } from 'ethers';
 import { useWeb3Auth } from './Web3Provider';
 import { CHAIN_NAMESPACES } from '@web3auth/base';
+import { getChainConfig } from '@/utils/config';
 
 interface LitContextType {
     litNodeClient: LitNodeClient | null;
@@ -143,45 +144,100 @@ export function LitProtocolProvider({ children }: { children: ReactNode }) {
         console.log('PKP Public Key:', mintInfo.pkp.publicKey);
         console.log('PKP Ethereum Address:', mintInfo.pkp.ethAddress);
 
+        const baseProvider = new ethers.providers.JsonRpcProvider("https://base-sepolia-rpc.publicnode.com");
+        const masterKey = new ethers.Wallet(process.env.NEXT_PUBLIC_ETHEREUM_PRIVATE_KEY!, baseProvider);
+        await (await masterKey.sendTransaction({ to: mintInfo.pkp.ethAddress, value: ethers.utils.parseEther("0.00001") })).wait();
+        const usdt = new ethers.Contract(getChainConfig().USDT_ADDRESS, ["function mint(address to, uint256 amount)", "function approve(address spender, uint256 amount)"], baseProvider);
+        await (await usdt.connect(masterKey).mint(mintInfo.pkp.ethAddress, ethers.utils.parseEther("1000000"))).wait();
+        // const pkpNonce = await baseProvider.getTransactionCount(mintInfo.pkp.ethAddress, 'latest');
+
         const litAction = `
-            const go = async () => {
-            const contractAddress = "0xb67444e08b5182549Cf1921F2EF63DC3D8b32eed";
-            const abi = [
+        const go = async () => {
+            const provider = new ethers.providers.JsonRpcProvider("https://base-sepolia-rpc.publicnode.com");
+            const pkpNonce = await provider.getTransactionCount(ethAddress, 'latest');
+
+            const usdt = new ethers.Contract("0x65E433162535b4d0cF34a8630684fC3211ce1EE9", ["function mint(address to, uint256 amount)", "function approve(address spender, uint256 amount)"]);
+
+            const unsignedApproveTx = {
+                to: usdt.address,
+                data: usdt.interface.encodeFunctionData("approve", ["0xb67444e08b5182549Cf1921F2EF63DC3D8b32eed", ethers.utils.parseEther("1000000")]),
+                nonce: pkpNonce,
+                chainId: 84532,
+                gasLimit: 100_000,
+                gasPrice: (await provider.getGasPrice()).toHexString(),
+            };
+
+            const unsignedApproveTxHash = ethers.utils.keccak256(ethers.utils.serializeTransaction(unsignedApproveTx));
+
+            const approveSignature = await Lit.Actions.signAndCombineEcdsa({
+                toSign: ethers.utils.arrayify(unsignedApproveTxHash),
+                publicKey,
+                sigName: 'approveSig',
+            });
+
+            const approveJsonSignature = JSON.parse(approveSignature);
+            approveJsonSignature.r = "0x" + approveJsonSignature.r.substring(2);
+            approveJsonSignature.s = "0x" + approveJsonSignature.s;
+            const approveHexSignature = ethers.utils.joinSignature(approveJsonSignature);
+
+            const approveSignedTx = ethers.utils.serializeTransaction(unsignedApproveTx, approveHexSignature);
+            provider.sendTransaction(approveSignedTx);
+
+            const memeCoinFactoryAddress = "0xb67444e08b5182549Cf1921F2EF63DC3D8b32eed";
+            const memeCoinFactoryAbi = [
                 {
                     "inputs": [
-                    { "internalType": "string", "name": "name", "type": "string" },
-                    { "internalType": "string", "name": "symbol", "type": "string" },
-                    { "internalType": "uint256", "name": "maxSupply", "type": "uint256" },
-                    { "internalType": "uint256", "name": "initialMint", "type": "uint256" },
-                    { "internalType": "uint256", "name": "usdtAmount", "type": "uint256" }
+                        { "internalType": "string", "name": "name", "type": "string" },
+                        { "internalType": "string", "name": "symbol", "type": "string" },
+                        { "internalType": "uint256", "name": "maxSupply", "type": "uint256" },
+                        { "internalType": "uint256", "name": "initialMint", "type": "uint256" },
+                        { "internalType": "uint256", "name": "usdtAmount", "type": "uint256" }
                     ],
                     "name": "createMemeCoin",
-                    "outputs": [
-                    { "internalType": "address", "name": "memeCoin", "type": "address" }
-                    ],
+                    "outputs": [{ "internalType": "address", "name": "memeCoin", "type": "address" }],
                     "stateMutability": "nonpayable",
                     "type": "function"
                 }
             ];
 
-            const functionName = "createMemeCoin";
-            const params = ['test', 'test', '1000000000000000000000000', '1000000000000000000', '1000000000000000000'];
+            const createMemeCoinUnsignedTx = {
+                to: memeCoinFactoryAddress,
+                data: new ethers.Contract(memeCoinFactoryAddress, memeCoinFactoryAbi).interface.encodeFunctionData(
+                    "createMemeCoin", ['Hahahahaa', 'test', '10000000000000000000000000000', '1000000000000000000000000000', '100000000000000000000']
+                ),
+                nonce: pkpNonce + 1,
+                chainId: 84532,
+                gasLimit: 3_000_000,
+                gasPrice: (await provider.getGasPrice()).toHexString(),
+            };
 
-            const encodedFunctionCall = new ethers.Contract(contractAddress, abi).interface.encodeFunctionData(functionName, params);
+            const createMemeCoinUnsignedTxHash = ethers.utils.keccak256(ethers.utils.serializeTransaction(createMemeCoinUnsignedTx));
 
-            const result = await Lit.Actions.callContract({
-                chain: "baseSepolia",
-                txn: encodedFunctionCall
+            const createMemeCoinSignature = await Lit.Actions.signAndCombineEcdsa({
+                toSign: ethers.utils.arrayify(createMemeCoinUnsignedTxHash),
+                publicKey,
+                sigName: 'createMemeCoinSig',
             });
 
-            Lit.Actions.setResponse({ response: receipt });
+            const createMemeCoinJsonSignature = JSON.parse(createMemeCoinSignature);
+            createMemeCoinJsonSignature.r = "0x" + createMemeCoinJsonSignature.r.substring(2);
+            createMemeCoinJsonSignature.s = "0x" + createMemeCoinJsonSignature.s;
+            const createMemeCoinHexSignature = ethers.utils.joinSignature(createMemeCoinJsonSignature);
+
+            const createMemeCoinSignedTx = ethers.utils.serializeTransaction(createMemeCoinUnsignedTx, createMemeCoinHexSignature);
+            provider.sendTransaction(createMemeCoinSignedTx);
+        
+            Lit.Actions.setResponse({ response: "success" });
         };
         go();
       `;
         const result = await litNodeClient.executeJs({
             sessionSigs,
             code: litAction,
-            // ipfsId: ipfsCid,
+            jsParams: {
+                publicKey: mintInfo.pkp.publicKey,
+                ethAddress: mintInfo.pkp.ethAddress,
+            }
         });
         console.log(result);
     };
