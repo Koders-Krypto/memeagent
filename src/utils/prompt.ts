@@ -1,4 +1,4 @@
-export const getSystemMessages = (address: string, balance: string, chainId: number) => [
+export const getSystemMessages = (address: string, balance: string, chainId: number, blockUrl: string) => [
   {
     "role": "system",
     "content": `
@@ -12,6 +12,7 @@ export const getSystemMessages = (address: string, balance: string, chainId: num
      Wallet Address: ${address}
      Chain ID: ${chainId}
      ETH Balance: ${balance}
+     Block Explorer URL: ${blockUrl}
 
      you have access to token creation tool and liquidity managing tools, please use them to create and manage tokens when user asks for it
 

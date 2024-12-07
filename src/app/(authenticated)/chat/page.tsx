@@ -12,6 +12,7 @@ import { useBalance } from '@/hooks/useBalance'
 import { getSystemMessages } from '@/utils/prompt'
 import { ethers } from 'ethers'
 import { useLitProtocol } from '@/providers/LitProtocol'
+import { getChainConfig } from '@/utils/config'
 
 interface Message {
     id: string
@@ -19,6 +20,32 @@ interface Message {
     content: string
     isStreaming?: boolean
 }
+
+// Add this helper function before the ChatPage component
+const makeLinksClickable = (text: string) => {
+    // Regex to match URLs
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+
+    // Split the text by URLs and map through parts
+    const parts = text.split(urlRegex);
+
+    return parts.map((part, index) => {
+        if (part.match(urlRegex)) {
+            return (
+                <a
+                    key={index}
+                    href={part}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-400 hover:text-blue-500 underline"
+                >
+                    {part}
+                </a>
+            );
+        }
+        return part;
+    });
+};
 
 export default function ChatPage() {
     const { app } = useLangChain()
@@ -35,6 +62,9 @@ export default function ChatPage() {
     const messagesEndRef = useRef<HTMLDivElement>(null)
     const chatContainerRef = useRef<HTMLDivElement>(null)
 
+    const [_balance, setBalance] = useState("0")
+    const [_chainId, setChainId] = useState(0)
+
     const [inputMessage, setInputMessage] = useState("");
     const [threadId, setThreadId] = useState(uuidv4());
     const [initialized, setInitialized] = useState(false);
@@ -44,6 +74,11 @@ export default function ChatPage() {
     // Initial welcome message
     useEffect(() => {
         if (balance === "0") return
+        setBalance(balance)
+        getChainId().then(chainId => {
+            setChainId(chainId)
+        })
+
         if (messages.length === 0) {
             setMessages([{
                 id: threadId,
@@ -83,10 +118,7 @@ Let's cook something legendary! What kind of meme magic shall we create today? ð
         const messageId = uuidv4()
         const aiMessageId = uuidv4()
 
-        const balance = await getBalance();
-        const chainId = await getChainId();
-
-        const systemMessages = getSystemMessages(address!, balance, chainId);
+        const systemMessages = getSystemMessages(address!, _balance, _chainId, getChainConfig().chainConfig.blockExplorerUrl);
 
         const messagesToSend = !initialized
             ? [...systemMessages, { role: "user", content: userInput }]
@@ -216,10 +248,12 @@ Let's cook something legendary! What kind of meme magic shall we create today? ð
                                             {message.isStreaming ? (
                                                 <div className="flex items-center gap-2">
                                                     <Loader2 className="w-4 h-4 animate-spin" />
-                                                    <span>Thinking...</span>
+                                                    <span>Meeming...</span>
                                                 </div>
                                             ) : (
-                                                <p className="whitespace-pre-wrap">{message.content}</p>
+                                                <p className="whitespace-pre-wrap">
+                                                    {makeLinksClickable(message.content)}
+                                                </p>
                                             )}
                                         </div>
                                     </motion.div>

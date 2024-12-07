@@ -64,24 +64,24 @@ export function MemeFactoryProvider({ children }: { children: ReactNode }) {
                     signer
                 )
 
-                console.log("approveContract", approveContract)
-
                 const approveTx = await approveContract.approve(
                     MEME_FACTORY_ADDRESS,
                     ethers.utils.parseEther(usdtAmount.toString())
                 )
 
-                console.log("approveTx", approveTx)
-
                 const approveReceipt = await approveTx.wait();
-
-                console.log("approveReceipt", approveReceipt)
 
                 const memeFactory = new ethers.Contract(
                     MEME_FACTORY_ADDRESS,
                     MemeCoinFactoryABI,
                     signer
                 );
+
+                console.log("params", name,
+                    symbol,
+                    ethers.utils.parseEther(maxSupply.toString()),
+                    ethers.utils.parseEther(initialMint.toString()),
+                    ethers.utils.parseEther(usdtAmount.toString()))
 
                 const tx = await memeFactory.createMemeCoin(
                     name,
@@ -100,7 +100,7 @@ export function MemeFactoryProvider({ children }: { children: ReactNode }) {
                 return memeCoinAddress || receipt.transactionHash;
             }
             catch (err: any) {
-                console.log("error", err)
+                return err.message;
             }
         } catch (err: any) {
             setError(err.message);

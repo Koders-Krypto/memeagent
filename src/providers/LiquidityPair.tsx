@@ -4,9 +4,11 @@ import { useWeb3Auth } from './Web3Provider';
 import { LiquidityPairABI } from '../abi/LiquidityPair';
 import { tool } from '@langchain/core/tools';
 import { z } from 'zod';
+import { getChainConfig } from '@/utils/config';
 
 interface LiquidityPairContextType {
     addLiquidity: (
+        memeCoinAddress: string,
         pairAddress: string,
         amount0Desired: number,
         amount1Desired: number,
@@ -37,6 +39,7 @@ interface LiquidityPairContextType {
     swapTool: any;
     getLiquidityTool: any;
     checkAllowanceTool: any;
+    getQuoteTool: any;
 }
 
 const LiquidityPairContext = createContext<LiquidityPairContextType | null>(null);
@@ -56,6 +59,7 @@ export function LiquidityPairProvider({ children }: { children: ReactNode }) {
     };
 
     const addLiquidity = async (
+        memeCoinAddress: string,
         pairAddress: string,
         amount0Desired: number,
         amount1Desired: number,
@@ -65,6 +69,15 @@ export function LiquidityPairProvider({ children }: { children: ReactNode }) {
         try {
             setIsLoading(true);
             setError(null);
+
+            const approveMemeCoinContract = getContract(memeCoinAddress);
+            const approveUsdtContract = getContract(getChainConfig().USDT_ADDRESS);
+
+            const memeCoinTx = await approveMemeCoinContract.approve(pairAddress, amount0Desired);
+            const memeCoinReceipt = await memeCoinTx.wait();
+
+            const usdtTx = await approveUsdtContract.approve(pairAddress, amount1Desired);
+            const usdtReceipt = await usdtTx.wait();
 
             const contract = getContract(pairAddress);
             const tx = await contract.addLiquidity(
@@ -166,19 +179,21 @@ export function LiquidityPairProvider({ children }: { children: ReactNode }) {
     };
 
     const addLiquidityTool = tool(
-        async ({ pairAddress, amount0Desired, amount1Desired, amount0Min, amount1Min }: {
+        async ({ memeCoinAddress, pairAddress, amount0Desired, amount1Desired, amount0Min, amount1Min }: {
+            memeCoinAddress: string,
             pairAddress: string,
             amount0Desired: number,
             amount1Desired: number,
             amount0Min: number,
             amount1Min: number
         }) => {
-            return await addLiquidity(pairAddress, amount0Desired, amount1Desired, amount0Min, amount1Min);
+            return await addLiquidity(memeCoinAddress, pairAddress, amount0Desired, amount1Desired, amount0Min, amount1Min);
         },
         {
             name: 'addLiquidity',
             description: 'Add liquidity to a specific trading pair',
             schema: z.object({
+                memeCoinAddress: z.string().describe('The address of the meme coin contract'),
                 pairAddress: z.string().describe('The address of the liquidity pair contract'),
                 amount0Desired: z.number().describe('The desired amount of token0 to add'),
                 amount1Desired: z.number().describe('The desired amount of token1 to add'),
@@ -250,6 +265,31 @@ export function LiquidityPairProvider({ children }: { children: ReactNode }) {
         }
     );
 
+    const getQuoteTool = tool(
+        async ({ pairAddress }) => {
+            const liquidity = await getLiquidity(pairAddress);
+
+            // Convert reserves to numbers (they come as strings)
+            const reserve0 = parseFloat(liquidity.reserve0);
+            const reserve1 = parseFloat(liquidity.reserve1);
+
+            // Calculate price (USDT per meme token)
+            if (reserve0 === 0) {
+                return 0;
+            }
+
+            const price = reserve1 / reserve0;
+            return price;
+        },
+        {
+            name: "getQuoteOfToken",
+            description: "Gets the meme token quote from usdt",
+            schema: z.object({
+                pairAddress: z.string().describe("meme token liquidity pair address")
+            })
+        }
+    );
+
     const value = {
         addLiquidity,
         removeLiquidity,
@@ -263,6 +303,7 @@ export function LiquidityPairProvider({ children }: { children: ReactNode }) {
         swapTool,
         getLiquidityTool,
         checkAllowanceTool,
+        getQuoteTool
     };
 
     return (

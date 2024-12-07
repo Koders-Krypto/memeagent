@@ -8,6 +8,9 @@ import { ToolNode } from "@langchain/langgraph/prebuilt";
 import { getSystemMessages } from '../utils/prompt'
 import { useMemeFactory } from './MemeFactory'
 import { useGraphData } from './GraphData'
+import { useMemeToken } from './MemeToken'
+import { useLiquidityPair } from './LiquidityPair'
+import { useLiquidityFactory } from './LiquidityFactory'
 
 interface LangChainContextType {
     app: any
@@ -26,14 +29,19 @@ export const useLangChain = () => {
 export function LangChainProvider({ children }: { children: React.ReactNode }) {
 
     const { getBalanceTool } = useWeb3Auth();
-
     const { fetchMemeCoinsDataTool } = useGraphData();
-
     const { createMemeCointTool, getMemeCoinCountTool, getMemeCoinCreatorTool, getUsdtTokenAddressTool, getLiquidityFactoryAddressTool } = useMemeFactory();
+    const { approveTool, getTokenInfoTool, transferTool, balanceOfTool, mintTool, burnTool, transferFromTool, decimalsTool } = useMemeToken();
+    const { getQuoteTool } = useLiquidityPair();
+
+    const { getPairTool } = useLiquidityFactory();
 
     const graphTools = [fetchMemeCoinsDataTool];
+    const memeTokenTools = [getTokenInfoTool, approveTool, transferTool, balanceOfTool, mintTool, burnTool, transferFromTool, decimalsTool];
     const contractTools = [getMemeCoinCountTool, getMemeCoinCreatorTool, getUsdtTokenAddressTool, getLiquidityFactoryAddressTool];
-    const tools = [getBalanceTool, createMemeCointTool, ...contractTools, ...graphTools];
+    const liquidityPairTools = [getQuoteTool];
+    const liquidityFactoryTools = [getPairTool];
+    const tools = [getBalanceTool, createMemeCointTool, ...contractTools, ...graphTools, ...memeTokenTools, ...liquidityPairTools, ...liquidityFactoryTools];
 
     const toolNode = new ToolNode(tools);
 

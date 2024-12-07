@@ -9,6 +9,7 @@ import { MemeFactoryProvider } from './MemeFactory'
 import { MemeTokenProvider } from './MemeToken'
 import { LiquidityPairProvider } from './LiquidityPair'
 import { GraphDataProvider } from './GraphData'
+import { LiquidityFactoryProvider } from './LiquidityFactory'
 
 export function Providers({ children }: { children: React.ReactNode }) {
     return (
@@ -18,13 +19,15 @@ export function Providers({ children }: { children: React.ReactNode }) {
                     <MemeFactoryProvider>
                         <MemeTokenProvider>
                             <LiquidityPairProvider>
-                                <GraphDataProvider>
-                                    <LangChainProvider>
-                                        <PWAProvider>
-                                            {children}
-                                        </PWAProvider>
-                                    </LangChainProvider>
-                                </GraphDataProvider>
+                                <LiquidityFactoryProvider>
+                                    <GraphDataProvider>
+                                        <LangChainProvider>
+                                            <PWAProvider>
+                                                {children}
+                                            </PWAProvider>
+                                        </LangChainProvider>
+                                    </GraphDataProvider>
+                                </LiquidityFactoryProvider>
                             </LiquidityPairProvider>
                         </MemeTokenProvider>
                     </MemeFactoryProvider>
