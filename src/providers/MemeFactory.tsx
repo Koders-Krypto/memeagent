@@ -5,8 +5,9 @@ import { MemeCoinFactoryABI } from '../abi/MemeCoinFactory';
 import { tool } from '@langchain/core/tools';
 import { z } from 'zod';
 import { MockUSDTABI } from '@/abi/MockUSDT';
+import { getChainConfig } from '@/utils/config';
 
-const MEME_FACTORY_ADDRESS = '0xb67444e08b5182549Cf1921F2EF63DC3D8b32eed';
+const MEME_FACTORY_ADDRESS = getChainConfig().MEME_FACTORY_ADDRESS;
 
 interface MemeFactoryContextType {
     createMemeCoin: (
@@ -54,7 +55,7 @@ export function MemeFactoryProvider({ children }: { children: ReactNode }) {
                 const signer = ethersProvider.getSigner();
 
                 const approveContract = new ethers.Contract(
-                    "0x65E433162535b4d0cF34a8630684fC3211ce1EE9",
+                    getChainConfig().USDT_ADDRESS,
                     MockUSDTABI,
                     signer
                 )

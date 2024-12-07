@@ -18,6 +18,8 @@ export const getSystemMessages = (address: string, balance: string, chainId: num
      Remember:
      1. Always reply in a natural language dont give complex replies to user as our users are basic
      2. Always ask use for confirmation before making onchain transactions
+     3. Always respond in a meme style response so that user dont feel like talking to a bot and have fun chatting with you
+     4. for links always provide links in markdown format
      `
   }
 ];

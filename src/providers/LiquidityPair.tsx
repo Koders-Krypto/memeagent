@@ -2,6 +2,8 @@ import { createContext, useContext, ReactNode, useState } from 'react';
 import { ethers } from 'ethers';
 import { useWeb3Auth } from './Web3Provider';
 import { LiquidityPairABI } from '../abi/LiquidityPair';
+import { tool } from '@langchain/core/tools';
+import { z } from 'zod';
 
 interface LiquidityPairContextType {
     addLiquidity: (
@@ -21,7 +23,7 @@ interface LiquidityPairContextType {
         amount1Out: number,
         to: string
     ) => Promise<string>;
-    getReserves: (
+    getLiquidity: (
         pairAddress: string
     ) => Promise<{ reserve0: string; reserve1: string }>;
     checkAllowance: (
@@ -30,6 +32,11 @@ interface LiquidityPairContextType {
     ) => Promise<{ token0Allowance: string; token1Allowance: string }>;
     isLoading: boolean;
     error: string | null;
+    addLiquidityTool: any;
+    removeLiquidityTool: any;
+    swapTool: any;
+    getLiquidityTool: any;
+    checkAllowanceTool: any;
 }
 
 const LiquidityPairContext = createContext<LiquidityPairContextType | null>(null);
@@ -116,6 +123,8 @@ export function LiquidityPairProvider({ children }: { children: ReactNode }) {
             setIsLoading(true);
             setError(null);
 
+            const approveContract = getContract(pairAddress);
+
             const contract = getContract(pairAddress);
             const tx = await contract.swap(amount0Out, amount1Out, to);
             const receipt = await tx.wait();
@@ -128,7 +137,7 @@ export function LiquidityPairProvider({ children }: { children: ReactNode }) {
         }
     };
 
-    const getReserves = async (pairAddress: string) => {
+    const getLiquidity = async (pairAddress: string) => {
         try {
             const contract = getContract(pairAddress);
             const [reserve0, reserve1] = await contract.getReserves();
@@ -156,14 +165,104 @@ export function LiquidityPairProvider({ children }: { children: ReactNode }) {
         }
     };
 
+    const addLiquidityTool = tool(
+        async ({ pairAddress, amount0Desired, amount1Desired, amount0Min, amount1Min }: {
+            pairAddress: string,
+            amount0Desired: number,
+            amount1Desired: number,
+            amount0Min: number,
+            amount1Min: number
+        }) => {
+            return await addLiquidity(pairAddress, amount0Desired, amount1Desired, amount0Min, amount1Min);
+        },
+        {
+            name: 'addLiquidity',
+            description: 'Add liquidity to a specific trading pair',
+            schema: z.object({
+                pairAddress: z.string().describe('The address of the liquidity pair contract'),
+                amount0Desired: z.number().describe('The desired amount of token0 to add'),
+                amount1Desired: z.number().describe('The desired amount of token1 to add'),
+                amount0Min: z.number().describe('The minimum amount of token0 to add'),
+                amount1Min: z.number().describe('The minimum amount of token1 to add'),
+            }),
+        }
+    );
+
+    const removeLiquidityTool = tool(
+        async ({ pairAddress, liquidity }: { pairAddress: string, liquidity: number }) => {
+            return await removeLiquidity(pairAddress, liquidity);
+        },
+        {
+            name: 'removeLiquidity',
+            description: 'Remove liquidity from a specific trading pair',
+            schema: z.object({
+                pairAddress: z.string().describe('The address of the liquidity pair contract'),
+                liquidity: z.number().describe('The amount of liquidity tokens to remove'),
+            }),
+        }
+    );
+
+    const swapTool = tool(
+        async ({ pairAddress, amount0Out, amount1Out, to }: {
+            pairAddress: string,
+            amount0Out: number,
+            amount1Out: number,
+            to: string
+        }) => {
+            return await swap(pairAddress, amount0Out, amount1Out, to);
+        },
+        {
+            name: 'swap',
+            description: 'Swap tokens in a specific trading pair',
+            schema: z.object({
+                pairAddress: z.string().describe('The address of the liquidity pair contract'),
+                amount0Out: z.number().describe('The amount of token0 to receive'),
+                amount1Out: z.number().describe('The amount of token1 to receive'),
+                to: z.string().describe('The address to receive the output tokens'),
+            }),
+        }
+    );
+
+    const getLiquidityTool = tool(
+        async ({ pairAddress }: { pairAddress: string }) => {
+            return await getLiquidity(pairAddress);
+        },
+        {
+            name: 'getLiquidity',
+            description: 'Get the current reserves of a trading pair',
+            schema: z.object({
+                pairAddress: z.string().describe('The address of the liquidity pair contract'),
+            }),
+        }
+    );
+
+    const checkAllowanceTool = tool(
+        async ({ pairAddress, owner }: { pairAddress: string, owner: string }) => {
+            return await checkAllowance(pairAddress, owner);
+        },
+        {
+            name: 'checkAllowance',
+            description: 'Check token allowances for a specific owner',
+            schema: z.object({
+                pairAddress: z.string().describe('The address of the liquidity pair contract'),
+                owner: z.string().describe('The address of the token owner'),
+            }),
+        }
+    );
+
     const value = {
         addLiquidity,
         removeLiquidity,
         swap,
-        getReserves,
+        getLiquidity,
         checkAllowance,
         isLoading,
         error,
+        addLiquidityTool,
+        removeLiquidityTool,
+        swapTool,
+        getLiquidityTool,
+        checkAllowanceTool,
     };
 
     return (

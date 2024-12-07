@@ -48,16 +48,19 @@ export default function ChatPage() {
             setMessages([{
                 id: threadId,
                 role: 'ai',
-                content: `Hello! I'm your Web3 AI Assistant. I can help you with:
+                content: `Sup fam! 🚀 Your friendly neighborhood MEME AGENT here! 
 
-• Wallet balance and transactions
-• DeFi operations (swaps, bridges, liquidity)
-• Smart contract interactions
-• Yield farming strategies
-• Cross-chain operations
-• Market analysis and opportunities
+Ready to make it rain with some dank tokens? I'm your go-to degenerate for:
 
-Your current wallet balance is ${parseFloat(balance).toFixed(6)} ETH. How can I assist you today?`
+🪄 Spawning fresh meme coins (wen moon?)
+💦 Managing that sweet liquidity pool life
+📈 Trading dem spicy meme tokens
+🎯 Sniping the next 100x gem
+
+Your wallet's currently holding ${parseFloat(balance).toFixed(6)} ETH to play with! 
+
+Let's cook something legendary! What kind of meme magic shall we create today? 🔥
+`
             }])
         }
     }, [balance])

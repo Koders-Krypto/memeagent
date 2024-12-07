@@ -17,6 +17,7 @@ import toast from 'react-hot-toast'
 import { tool } from "@langchain/core/tools"
 import { ethers } from 'ethers'
 import { MockUSDTABI } from '@/abi/MockUSDT'
+import { getChainConfig } from "@/utils/config"
 
 interface Web3ContextType {
     provider: IProvider | null
@@ -55,16 +56,7 @@ export function Web3Provider({ children }: { children: React.ReactNode }) {
 
     const router = useRouter()
 
-    const baseSepoliaConfig = {
-        chainNamespace: CHAIN_NAMESPACES.EIP155,
-        chainId: "0x14a34",
-        rpcTarget: "https://sepolia.base.org",
-        displayName: "Base Sepolia Testnet",
-        blockExplorerUrl: "https://sepolia.basescan.org/",
-        ticker: "ETH",
-        tickerName: "Ethereum",
-        logo: "https://cryptologos.cc/logos/ethereum-eth-logo.png",
-    }
+    const baseSepoliaConfig = getChainConfig().chainConfig;
 
     const litChronicleYellowstoneConfig = {
         chainNamespace: CHAIN_NAMESPACES.EIP155,
@@ -219,7 +211,7 @@ export function Web3Provider({ children }: { children: React.ReactNode }) {
         if (!provider || !address) return;
         try {
             const ethersProvider = new ethers.providers.Web3Provider(provider);
-            const usdtAddress = "0x65E433162535b4d0cF34a8630684fC3211ce1EE9";
+            const usdtAddress = getChainConfig().USDT_ADDRESS;
             const contract = new ethers.Contract(usdtAddress, MockUSDTABI, ethersProvider);
             const balance = await contract.balanceOf(address);
             const formattedBalance = ethers.utils.formatUnits(balance, 18);
