@@ -65,6 +65,7 @@ export default function ChatPage() {
     // Initial welcome message
     useEffect(() => {
         if (balance === "0") return;
+        if (initialized) return;
         setBalance(balance);
         getChainId().then((chainId) => {
             setChainId(chainId);
@@ -238,8 +239,8 @@ Let's cook something legendary! What kind of meme magic shall we create today? ð
                                         </div>
                                         <div
                                             className={`flex-1 max-w-full rounded-2xl break-words ${message.role !== "human"
-                                                    ? "bg-gray-700 p-4 text-white rounded-tl-none"
-                                                    : "rounded-tl-none text-right"
+                                                ? "bg-gray-700 p-4 text-white rounded-tl-none"
+                                                : "rounded-tl-none text-right"
                                                 }`}
                                         >
                                             {message.isStreaming ? (
