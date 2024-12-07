@@ -25,16 +25,20 @@ export function LiquidityFactoryProvider({ children }: { children: ReactNode }) 
     const [error, setError] = useState<string | null>(null);
 
     const getContract = () => {
-        if (!provider) {
-            throw new Error('Provider not initialized');
+        try {
+            if (!provider) {
+                return new Error('Provider not initialized');
+            }
+            const ethersProvider = new ethers.providers.Web3Provider(provider);
+            const signer = ethersProvider.getSigner();
+            return new ethers.Contract(
+                getChainConfig().LIQUIDITY_FACTORY_ADDRESS,
+                LiquidityFactoryABI,
+                signer
+            );
+        } catch (err: any) {
+            return err;
         }
-        const ethersProvider = new ethers.providers.Web3Provider(provider);
-        const signer = ethersProvider.getSigner();
-        return new ethers.Contract(
-            getChainConfig().LIQUIDITY_FACTORY_ADDRESS,
-            LiquidityFactoryABI,
-            signer
-        );
     };
 
     const createPair = async (tokenA: string, tokenB: string) => {
@@ -53,20 +57,21 @@ export function LiquidityFactoryProvider({ children }: { children: ReactNode }) 
             return event?.args?.pair || '';
         } catch (err: any) {
             setError(err.message);
-            throw err;
+            return err;
         } finally {
             setIsLoading(false);
         }
     };
 
-    const getPair = async (tokenA: string, tokenB: string) => {
+    const getPair = async (tokenA: string) => {
         try {
             const contract = getContract();
-            const pairAddress = await contract.getPair(tokenA, tokenB);
+            const pairAddress = await contract.getPair(tokenA, getChainConfig().USDT_ADDRESS);
             return pairAddress;
         } catch (err: any) {
+            console.log("getPair", err)
             setError(err.message);
-            throw err;
+            return err;
         }
     };
 
@@ -84,7 +89,7 @@ export function LiquidityFactoryProvider({ children }: { children: ReactNode }) 
             return pairs;
         } catch (err: any) {
             setError(err.message);
-            throw err;
+            return err;
         }
     };
 
@@ -103,16 +108,15 @@ export function LiquidityFactoryProvider({ children }: { children: ReactNode }) 
     );
 
     const getPairTool = tool(
-        async ({ tokenA, tokenB }: { tokenA: string; tokenB: string }) => {
-            console.log("getPairTool", tokenA, tokenB)
-            return await getPair(tokenA, tokenB);
+        async ({ tokenA }: { tokenA: string }) => {
+            console.log("getPairTool", tokenA)
+            return await getPair(tokenA);
         },
         {
             name: 'getPair',
             description: 'Get the address of an existing liquidity pair',
             schema: z.object({
-                tokenA: z.string().describe('The address of the first token'),
-                tokenB: z.string().describe('The address of the second token'),
+                tokenA: z.string().describe('The address of the meme token'),
             }),
         }
     );

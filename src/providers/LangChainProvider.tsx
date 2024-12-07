@@ -28,25 +28,25 @@ export const useLangChain = () => {
 
 export function LangChainProvider({ children }: { children: React.ReactNode }) {
 
-    const { getBalanceTool } = useWeb3Auth();
+    const { getBalanceTool, mintUsdtTool } = useWeb3Auth();
     const { fetchMemeCoinsDataTool } = useGraphData();
     const { createMemeCointTool, getMemeCoinCountTool, getMemeCoinCreatorTool, getUsdtTokenAddressTool, getLiquidityFactoryAddressTool } = useMemeFactory();
     const { approveTool, getTokenInfoTool, getListOfMemeTokensTool, transferTool, balanceOfTool, mintTool, burnTool, transferFromTool, decimalsTool } = useMemeToken();
-    const { getQuoteTool } = useLiquidityPair();
+    const { getQuoteTool, swapTool, getLiquidityTool, checkAllowanceTool } = useLiquidityPair();
 
     const { getPairTool } = useLiquidityFactory();
 
     const graphTools = [fetchMemeCoinsDataTool];
-    const memeTokenTools = [getTokenInfoTool, approveTool, transferTool, balanceOfTool, mintTool, burnTool, transferFromTool, decimalsTool, getListOfMemeTokensTool];
+    const memeTokenTools = [getTokenInfoTool, approveTool, balanceOfTool, mintTool, burnTool, decimalsTool, transferTool, transferFromTool];
     const contractTools = [getMemeCoinCountTool, getMemeCoinCreatorTool, getUsdtTokenAddressTool, getLiquidityFactoryAddressTool];
-    const liquidityPairTools = [getQuoteTool];
+    const liquidityPairTools = [getQuoteTool, swapTool, getLiquidityTool, checkAllowanceTool];
     const liquidityFactoryTools = [getPairTool];
-    const tools = [getBalanceTool, createMemeCointTool, ...contractTools, ...graphTools, ...memeTokenTools, ...liquidityPairTools, ...liquidityFactoryTools];
+    const tools = [getBalanceTool, createMemeCointTool, mintUsdtTool, ...contractTools, ...graphTools, ...memeTokenTools, ...liquidityPairTools, ...liquidityFactoryTools];
 
     const toolNode = new ToolNode(tools);
 
     const model = new ChatOpenAI({
-        model: "gpt-4",
+        model: "gpt-4o-mini",
         temperature: 0,
         apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
     }).bindTools(tools);

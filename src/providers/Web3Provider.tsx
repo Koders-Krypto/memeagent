@@ -18,6 +18,7 @@ import { tool } from "@langchain/core/tools"
 import { ethers } from 'ethers'
 import { MockUSDTABI } from '@/abi/MockUSDT'
 import { getChainConfig } from "@/utils/config"
+import { z } from 'zod'
 
 interface Web3ContextType {
     provider: IProvider | null
@@ -33,6 +34,7 @@ interface Web3ContextType {
     getBalanceTool: any
     usdBalance: string
     getUsdBalance: () => Promise<void>
+    mintUsdtTool: any
 }
 
 const Web3Context = createContext<Web3ContextType | null>(null)
@@ -241,6 +243,31 @@ export function Web3Provider({ children }: { children: React.ReactNode }) {
         }
     )
 
+    const mintUsdt = async (amount: number) => {
+        if (!provider || !address) return;
+        const ethersProvider = new ethers.providers.Web3Provider(provider);
+        const signer = ethersProvider.getSigner();
+        const usdtAddress = getChainConfig().USDT_ADDRESS;
+        const contract = new ethers.Contract(usdtAddress, MockUSDTABI, signer);
+        const tx = await contract.mint(address, ethers.utils.parseUnits(amount.toString(), 18));
+        await tx.wait();
+        return tx;
+    }
+
+    const mintUsdtTool = tool(
+        async ({ amount }) => {
+            const tx = await mintUsdt(amount);
+            return tx;
+        },
+        {
+            name: "mint_usdt",
+            description: "Mint USDT to the user's connected wallet",
+            schema: z.object({
+                amount: z.number(),
+            }),
+        }
+    )
+
     return (
         <Web3Context.Provider
             value={{
@@ -257,6 +284,7 @@ export function Web3Provider({ children }: { children: React.ReactNode }) {
                 getBalanceTool,
                 usdBalance,
                 getUsdBalance,
+                mintUsdtTool
             }}
         >
             {children}

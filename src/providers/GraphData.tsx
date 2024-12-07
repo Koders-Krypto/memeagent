@@ -34,6 +34,7 @@ const fetchMemeCoinsData = async (address: string): Promise<MemeCoin> => {
         query: `
             query MemeTokenOwnersQuery {
               memeCoins(where: {creator: "${address}"}) {
+                id
                 totalSupply
                 name
                 symbol
@@ -76,7 +77,7 @@ export const GraphDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         },
         {
             name: 'fetchMemeCoinsData',
-            description: 'Fetch all meme coins created by the user from The Graph'
+            description: 'Fetch all meme coins information created by the user from The Graph'
         }
     );
 

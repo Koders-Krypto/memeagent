@@ -95,7 +95,7 @@ export function LiquidityPairProvider({ children }: { children: ReactNode }) {
             return receipt.transactionHash;
         } catch (err: any) {
             setError(err.message);
-            throw err;
+            return err;
         } finally {
             setIsLoading(false);
         }
@@ -120,7 +120,7 @@ export function LiquidityPairProvider({ children }: { children: ReactNode }) {
             };
         } catch (err: any) {
             setError(err.message);
-            throw err;
+            return err;
         } finally {
             setIsLoading(false);
         }
@@ -135,16 +135,16 @@ export function LiquidityPairProvider({ children }: { children: ReactNode }) {
         try {
             setIsLoading(true);
             setError(null);
-
+            console.log("swap", pairAddress, amount0Out, amount1Out, to)
             const approveContract = getContract(pairAddress);
-
+            await approveContract.approve(pairAddress, amount0Out);
             const contract = getContract(pairAddress);
             const tx = await contract.swap(amount0Out, amount1Out, to);
             const receipt = await tx.wait();
             return receipt.transactionHash;
         } catch (err: any) {
             setError(err.message);
-            throw err;
+            return err;
         } finally {
             setIsLoading(false);
         }
@@ -160,7 +160,7 @@ export function LiquidityPairProvider({ children }: { children: ReactNode }) {
             };
         } catch (err: any) {
             setError(err.message);
-            throw err;
+            return err;
         }
     };
 
@@ -174,7 +174,7 @@ export function LiquidityPairProvider({ children }: { children: ReactNode }) {
             };
         } catch (err: any) {
             setError(err.message);
-            throw err;
+            return err;
         }
     };
 

@@ -75,17 +75,21 @@ interface MemeTokenContextType {
 const MemeTokenContext = createContext<MemeTokenContextType | null>(null);
 
 export function MemeTokenProvider({ children }: { children: ReactNode }) {
-    const { provider } = useWeb3Auth();
+    const { provider, address } = useWeb3Auth();
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
     const getContract = (tokenAddress: string) => {
-        if (!provider) {
-            throw new Error('Provider not initialized');
+        try {
+            if (!provider) {
+                return new Error('Provider not initialized');
+            }
+            const ethersProvider = new ethers.providers.Web3Provider(provider);
+            const signer = ethersProvider.getSigner();
+            return new ethers.Contract(tokenAddress, MemeCoinABI, signer);
+        } catch (err: any) {
+            return err;
         }
-        const ethersProvider = new ethers.providers.Web3Provider(provider);
-        const signer = ethersProvider.getSigner();
-        return new ethers.Contract(tokenAddress, MemeCoinABI, signer);
     };
 
     const approve = async (tokenAddress: string, spender: string, amount: number) => {
@@ -100,7 +104,7 @@ export function MemeTokenProvider({ children }: { children: ReactNode }) {
             return receipt.status === 1;
         } catch (err: any) {
             setError(err.message);
-            throw err;
+            return err;
         } finally {
             setIsLoading(false);
         }
@@ -123,20 +127,21 @@ export function MemeTokenProvider({ children }: { children: ReactNode }) {
             return receipt.status === 1;
         } catch (err: any) {
             setError(err.message);
-            throw err;
+            return err;
         } finally {
             setIsLoading(false);
         }
     };
 
-    const balanceOf = async (tokenAddress: string, account: string) => {
+    const balanceOf = async (tokenAddress: string) => {
         try {
+
             const contract = getContract(tokenAddress);
-            const balance = await contract.balanceOf(account);
+            const balance = await contract.balanceOf(address);
             return balance.toString();
         } catch (err: any) {
             setError(err.message);
-            throw err;
+            return err;
         }
     };
 
@@ -147,7 +152,7 @@ export function MemeTokenProvider({ children }: { children: ReactNode }) {
             return amount.toString();
         } catch (err: any) {
             setError(err.message);
-            throw err;
+            return err;
         }
     };
 
@@ -161,7 +166,7 @@ export function MemeTokenProvider({ children }: { children: ReactNode }) {
             await tx.wait();
         } catch (err: any) {
             setError(err.message);
-            throw err;
+            return err;
         } finally {
             setIsLoading(false);
         }
@@ -177,7 +182,7 @@ export function MemeTokenProvider({ children }: { children: ReactNode }) {
             await tx.wait();
         } catch (err: any) {
             setError(err.message);
-            throw err;
+            return err;
         } finally {
             setIsLoading(false);
         }
@@ -185,6 +190,7 @@ export function MemeTokenProvider({ children }: { children: ReactNode }) {
 
     const getTokenInfo = async (tokenAddress: string) => {
         try {
+            console.log("getTokenInfo", tokenAddress)
             const contract = getContract(tokenAddress);
             const [name, symbol, decimals, totalSupply, maxSupply] = await Promise.all([
                 contract.name(),
@@ -203,7 +209,7 @@ export function MemeTokenProvider({ children }: { children: ReactNode }) {
             };
         } catch (err: any) {
             setError(err.message);
-            throw err;
+            return err;
         }
     };
 
@@ -224,7 +230,7 @@ export function MemeTokenProvider({ children }: { children: ReactNode }) {
             return receipt.status === 1;
         } catch (err: any) {
             setError(err.message);
-            throw err;
+            return err;
         } finally {
             setIsLoading(false);
         }
@@ -237,7 +243,7 @@ export function MemeTokenProvider({ children }: { children: ReactNode }) {
             return result;
         } catch (err: any) {
             setError(err.message);
-            throw err;
+            return err;
         }
     };
 
@@ -248,7 +254,7 @@ export function MemeTokenProvider({ children }: { children: ReactNode }) {
             return supply.toString();
         } catch (err: any) {
             setError(err.message);
-            throw err;
+            return err;
         }
     };
 
@@ -258,21 +264,26 @@ export function MemeTokenProvider({ children }: { children: ReactNode }) {
             return await contract.symbol();
         } catch (err: any) {
             setError(err.message);
-            throw err;
+            return err;
         }
     };
 
     const getListOfMemeTokens = async () => {
-        if (!provider) {
-            throw new Error('Provider not initialized');
+        try {
+            if (!provider) {
+                return new Error('Provider not initialized');
+            }
+            console.log("getListOfMemeTokens", getChainConfig().MEME_FACTORY_ADDRESS)
+            const ethersProvider = new ethers.providers.Web3Provider(provider);
+            const signer = ethersProvider.getSigner();
+            const contract = new ethers.Contract(getChainConfig().MEME_FACTORY_ADDRESS, MemeCoinFactoryABI, signer);
+            const results = await contract.allMemeCoinTokens();
+            console.log("results", results)
+            return results;
+        } catch (err: any) {
+            console.log("err", err)
+            return err;
         }
-        console.log("getListOfMemeTokens", getChainConfig().MEME_FACTORY_ADDRESS)
-        const ethersProvider = new ethers.providers.Web3Provider(provider);
-        const signer = ethersProvider.getSigner();
-        const contract = new ethers.Contract(getChainConfig().MEME_FACTORY_ADDRESS, MemeCoinFactoryABI, signer);
-        const results = await contract.allMemeCoinTokens();
-        console.log("results", results)
-        return results;
     };
 
     const getListOfMemeTokensTool = tool(
@@ -281,7 +292,7 @@ export function MemeTokenProvider({ children }: { children: ReactNode }) {
         },
         {
             name: 'getListOfMemeTokens',
-            description: 'Get the list of all meme tokens',
+            description: 'Get the list of all meme tokens contract addresses',
         }
     );
 
@@ -317,15 +328,14 @@ export function MemeTokenProvider({ children }: { children: ReactNode }) {
     );
 
     const balanceOfTool = tool(
-        async ({ tokenAddress, account }: { tokenAddress: string; account: string }) => {
-            return await balanceOf(tokenAddress, account);
+        async ({ tokenAddress }: { tokenAddress: string }) => {
+            return await balanceOf(tokenAddress);
         },
         {
             name: 'getTokenBalance',
             description: 'Get token balance of an address',
             schema: z.object({
                 tokenAddress: z.string().describe('The address of the token contract'),
-                account: z.string().describe('The address to check balance for'),
             }),
         }
     );
@@ -366,7 +376,7 @@ export function MemeTokenProvider({ children }: { children: ReactNode }) {
             name: 'getTokenInfo',
             description: 'Get comprehensive token information including name, symbol, decimals, and supply',
             schema: z.object({
-                tokenAddress: z.string().describe('The address of the token contract'),
+                tokenAddress: z.string().describe('The address of the token contract example: 0x1234567890123456789012345678901234567890'),
             }),
         }
     );

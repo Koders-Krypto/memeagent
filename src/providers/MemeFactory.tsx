@@ -103,8 +103,8 @@ export function MemeFactoryProvider({ children }: { children: ReactNode }) {
                 return err.message;
             }
         } catch (err: any) {
-            setError(err.message);
-            throw err;
+            setError(err);
+            return err;
         } finally {
             setIsLoading(false);
         }
@@ -128,55 +128,72 @@ export function MemeFactoryProvider({ children }: { children: ReactNode }) {
     );
 
     const getMemeCoinCount = async () => {
-        if (!provider) {
-            return 0;
+        try {
+            if (!provider) {
+                return new Error('Provider not initialized');
+            }
+            const ethersProvider = new ethers.providers.Web3Provider(provider);
+            const memeFactory = new ethers.Contract(
+                MEME_FACTORY_ADDRESS,
+                MemeCoinFactoryABI,
+                ethersProvider
+            );
+            return (await memeFactory.getMemeCoinCount()).toString();
+        } catch (err: any) {
+            return err;
         }
-        const ethersProvider = new ethers.providers.Web3Provider(provider);
-        const memeFactory = new ethers.Contract(
-            MEME_FACTORY_ADDRESS,
-            MemeCoinFactoryABI,
-            ethersProvider
-        );
-        return (await memeFactory.getMemeCoinCount()).toString();
     };
 
     const getMemeCoinCreator = async (memeCoin: string) => {
-        if (!provider) {
-            throw new Error('Provider not initialized');
+        try {
+            if (!provider) {
+                return new Error('Provider not initialized');
+            }
+            const ethersProvider = new ethers.providers.Web3Provider(provider);
+            const memeFactory = new ethers.Contract(
+                MEME_FACTORY_ADDRESS,
+                MemeCoinFactoryABI,
+                ethersProvider
+            );
+            return await memeFactory.getMemeCoinCreator(memeCoin);
+        } catch (err: any) {
+            return err;
         }
-        const ethersProvider = new ethers.providers.Web3Provider(provider);
-        const memeFactory = new ethers.Contract(
-            MEME_FACTORY_ADDRESS,
-            MemeCoinFactoryABI,
-            ethersProvider
-        );
-        return await memeFactory.getMemeCoinCreator(memeCoin);
+
     };
 
     const getUsdtTokenAddress = async () => {
-        if (!provider) {
-            throw new Error('Provider not initialized');
+        try {
+            if (!provider) {
+                return new Error('Provider not initialized');
+            }
+            const ethersProvider = new ethers.providers.Web3Provider(provider);
+            const memeFactory = new ethers.Contract(
+                MEME_FACTORY_ADDRESS,
+                MemeCoinFactoryABI,
+                ethersProvider
+            );
+            return await memeFactory.usdtToken();
+        } catch (err: any) {
+            return err;
         }
-        const ethersProvider = new ethers.providers.Web3Provider(provider);
-        const memeFactory = new ethers.Contract(
-            MEME_FACTORY_ADDRESS,
-            MemeCoinFactoryABI,
-            ethersProvider
-        );
-        return await memeFactory.usdtToken();
     };
 
     const getLiquidityFactoryAddress = async () => {
-        if (!provider) {
-            throw new Error('Provider not initialized');
+        try {
+            if (!provider) {
+                return new Error('Provider not initialized');
+            }
+            const ethersProvider = new ethers.providers.Web3Provider(provider);
+            const memeFactory = new ethers.Contract(
+                MEME_FACTORY_ADDRESS,
+                MemeCoinFactoryABI,
+                ethersProvider
+            );
+            return await memeFactory.liquidityFactory();
+        } catch (err: any) {
+            return err;
         }
-        const ethersProvider = new ethers.providers.Web3Provider(provider);
-        const memeFactory = new ethers.Contract(
-            MEME_FACTORY_ADDRESS,
-            MemeCoinFactoryABI,
-            ethersProvider
-        );
-        return await memeFactory.liquidityFactory();
     };
 
     const getMemeCoinCountTool = tool(
