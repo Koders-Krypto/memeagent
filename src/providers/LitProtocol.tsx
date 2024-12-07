@@ -13,10 +13,11 @@ import { ethers } from 'ethers';
 import { useWeb3Auth } from './Web3Provider';
 import { CHAIN_NAMESPACES } from '@web3auth/base';
 import { getChainConfig } from '@/utils/config';
-
+import { tool } from '@langchain/core/tools';
+import { z } from 'zod';
 interface LitContextType {
     litNodeClient: LitNodeClient | null;
-    executeLitAction: (hoursValid: number) => Promise<void>;
+    createMemeTokenTool: any;
     mintCapacityCredits: (requestsPerKilosecond: number, daysValid: number) => Promise<string>;
 }
 
@@ -102,10 +103,10 @@ export function LitProtocolProvider({ children }: { children: ReactNode }) {
         return { signer, litContracts, sessionSigs };
     };
 
-    const executeLitAction = async (hoursValid: number = 24) => {
+    const createMemeToken = async (tokenName: string, symbol: string, maxSupply: string, initialMint: string, usdtAmount: string) => {
         if (!litNodeClient || !provider || !address) throw new Error("Lit client not initialized");
 
-        const { signer, litContracts, sessionSigs } = await getSessionSigs(hoursValid);
+        const { signer, litContracts, sessionSigs } = await getSessionSigs(24);
         console.log(sessionSigs)
 
 
@@ -203,7 +204,7 @@ export function LitProtocolProvider({ children }: { children: ReactNode }) {
             const createMemeCoinUnsignedTx = {
                 to: memeCoinFactoryAddress,
                 data: new ethers.Contract(memeCoinFactoryAddress, memeCoinFactoryAbi).interface.encodeFunctionData(
-                    "createMemeCoin", ['Hahahahaa', 'test', '10000000000000000000000000000', '1000000000000000000000000000', '100000000000000000000']
+                    "createMemeCoin", [tokenName, symbol, maxSupply, initialMint, usdtAmount]
                 ),
                 nonce: pkpNonce + 1,
                 chainId: 84532,
@@ -242,6 +243,22 @@ export function LitProtocolProvider({ children }: { children: ReactNode }) {
         console.log(result);
     };
 
+    const createMemeTokenTool = tool(
+        async ({ tokenName, symbol, maxSupply, initialMint }) => {
+            await createMemeToken(tokenName, symbol, ethers.utils.parseUnits(maxSupply, 18).toString(), ethers.utils.parseUnits(initialMint, 18).toString(), ethers.utils.parseUnits("1", 18).toString());
+        },
+        {
+            name: "create_meme_token",
+            description: "Create a meme token",
+            schema: z.object({
+                tokenName: z.string().describe("The name of the token"),
+                symbol: z.string().describe("The symbol of the token"),
+                maxSupply: z.string().describe("The maximum supply of the token"),
+                initialMint: z.string().describe("The initial mint of the token"),
+            }),
+        }
+    )
+
     const mintCapacityCredits = async (requestsPerKilosecond: number, daysValid: number) => {
         const signer = new ethers.Wallet(
             process.env.NEXT_PUBLIC_ETHEREUM_PRIVATE_KEY!,
@@ -264,7 +281,7 @@ export function LitProtocolProvider({ children }: { children: ReactNode }) {
     };
 
     return (
-        <LitContext.Provider value={{ litNodeClient, executeLitAction, mintCapacityCredits }}>
+        <LitContext.Provider value={{ litNodeClient, createMemeTokenTool, mintCapacityCredits }}>
             {children}
         </LitContext.Provider>
     );

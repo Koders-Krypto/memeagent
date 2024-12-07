@@ -69,7 +69,7 @@ export default function ChatPage() {
     const [threadId, setThreadId] = useState(uuidv4());
     const [initialized, setInitialized] = useState(false);
 
-    const { executeLitAction } = useLitProtocol()
+    // const { executeLitAction } = useLitProtocol()
 
     // Initial welcome message
     useEffect(() => {
@@ -208,11 +208,6 @@ Let's cook something legendary! What kind of meme magic shall we create today? ð
                     </div>
                 </div>
             </div>
-
-
-            <button onClick={() => executeLitAction(1)}>
-                executeLitAction
-            </button>
 
             <div
                 ref={chatContainerRef}
