@@ -340,7 +340,7 @@ export default function WalletPage() {
                 <div className="flex justify-center space-x-4 w-full">
                   <button
                     onClick={copyAddress}
-                    className="flex items-center space-x-2 p-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
+                    className="flex items-center space-x-2 p-3 bg-primary text-black rounded-lg hover:bg-primary/90 transition-colors"
                   >
                     <Copy className="w-5 h-5" />
                     <span>Copy</span>
@@ -349,7 +349,7 @@ export default function WalletPage() {
                     href={`https://sepolia.etherscan.io/address/${address}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center space-x-2 p-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
+                    className="flex items-center space-x-2 p-3 bg-primary text-black rounded-lg hover:bg-primary/90 transition-colors"
                   >
                     <ExternalLink className="w-5 h-5" />
                     <span>Explorer</span>
