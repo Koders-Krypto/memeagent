@@ -21,6 +21,7 @@ interface MemeFactoryContextType {
     getMemeCoinCreator: (memeCoin: string) => Promise<string>;
     getUsdtTokenAddress: () => Promise<string>;
     getLiquidityFactoryAddress: () => Promise<string>;
+    getMemeCoinAddressTool: (name: string, symbol: string, maxSupply: number, initialMint: number, usdtAmount: number) => Promise<string | undefined>;
     createMemeCointTool: any;
     getMemeCoinCountTool: any;
     getMemeCoinCreatorTool: any;
@@ -242,6 +243,23 @@ export function MemeFactoryProvider({ children }: { children: ReactNode }) {
         }
     );
 
+    const getMemeCoinAddressTool = async (name: string, symbol: string, maxSupply: number, initialMint: number, usdtAmount: number) => {
+        if (!provider) {
+            return "provider not initialized"
+        }
+        const ethersProvider = new ethers.providers.Web3Provider(provider);
+        const signer = ethersProvider.getSigner();
+        const memeFactorycontract = new ethers.Contract(getChainConfig().MEME_FACTORY_ADDRESS, MemeCoinFactoryABI, signer);
+        const staticResults = await memeFactorycontract.callStatic.createMeme(
+            name,
+            symbol,
+            ethers.utils.parseEther(maxSupply.toString()),
+            ethers.utils.parseEther(initialMint.toString()),
+            ethers.utils.parseEther(usdtAmount.toString())
+        )
+        console.log("static results", staticResults);
+    }
+
     return (
         <MemeFactoryContext.Provider value={{
             createMemeCoin,
@@ -249,6 +267,7 @@ export function MemeFactoryProvider({ children }: { children: ReactNode }) {
             getMemeCoinCreator,
             getUsdtTokenAddress,
             getLiquidityFactoryAddress,
+            getMemeCoinAddressTool,
             createMemeCointTool,
             getMemeCoinCountTool,
             getMemeCoinCreatorTool,

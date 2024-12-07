@@ -11,6 +11,7 @@ import { useGraphData } from './GraphData'
 import { useMemeToken } from './MemeToken'
 import { useLiquidityPair } from './LiquidityPair'
 import { useLiquidityFactory } from './LiquidityFactory'
+import { useLitProtocol } from './LitProtocol'
 
 interface LangChainContextType {
     app: any
@@ -36,6 +37,7 @@ export function LangChainProvider({ children }: { children: React.ReactNode }) {
 
     const { getPairTool } = useLiquidityFactory();
 
+    const { createMemeTokenTool } = useLitProtocol();
     const graphTools = [fetchMemeCoinsDataTool];
     const memeTokenTools = [getTokenInfoTool, approveTool, balanceOfTool, mintTool, burnTool, decimalsTool, transferTool, transferFromTool];
     const contractTools = [getMemeCoinCountTool, getMemeCoinCreatorTool, getUsdtTokenAddressTool, getLiquidityFactoryAddressTool];
