@@ -2,7 +2,7 @@ import { CHAIN_NAMESPACES } from "@web3auth/base";
 
 export const getChainConfig = () => {
     return bnbSepolia
-    //, bnbSepolia, polygonMumbai, Supratestnet baseSepolia; 
+    //bnbSepolia, polygonMumbai, Supratestnet baseSepolia; 
 }
 
 const baseSepolia = {
