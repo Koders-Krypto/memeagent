@@ -55,7 +55,6 @@ export default function ChatPage() {
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
-
   const [_balance, setBalance] = useState("0");
   const [_chainId, setChainId] = useState(0);
 
