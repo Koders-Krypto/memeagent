@@ -5,6 +5,7 @@ export const getChainConfig = () => {
     //, bnbSepolia, polygonMumbai, Supratestnet baseSepolia; 
 }
 
+
 const baseSepolia = {
     chainConfig: {
         chainNamespace: CHAIN_NAMESPACES.EIP155,
