@@ -1,7 +1,7 @@
 import { CHAIN_NAMESPACES } from "@web3auth/base";
 
 export const getChainConfig = () => {
-    return bNbSepolia
+    return bnbSepolia
     //, bnbSepolia, polygonMumbai, Supratestnet baseSepolia; 
 }
 
@@ -21,7 +21,7 @@ const baseSepolia = {
     LIQUIDITY_FACTORY_ADDRESS: "0x22900c39c0C71D44C3952c67438FD3f8c75ee6EC"
 }
 
-const bNbSepolia = {
+const bnbSepolia = {
     chainConfig: {
         chainNamespace: CHAIN_NAMESPACES.EIP155,
         chainId: "0x15eb",
