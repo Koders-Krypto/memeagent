@@ -57,11 +57,11 @@ export default function RootLayout({
       <body
         className={
           Inter.className +
-          " bg-background text-foreground max-w-xl mx-auto md:border-x border-primary"
+          " bg-gradient-r min-h-screen text-foreground max-w-xl mx-auto md:border-x border-primary"
         }
       >
         <Providers>
-          {children}
+          <div className="bg-gradient-b min-h-screen">{children}</div>
           <InstallPrompt />
           <Toaster position="bottom-center" />
         </Providers>

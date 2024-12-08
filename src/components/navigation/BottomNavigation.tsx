@@ -43,7 +43,7 @@ export function BottomNavigation() {
   const pathname = usePathname();
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-background border-primary  max-w-xl mx-auto md:border-x w-full p-4">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-transparent border-primary  max-w-xl mx-auto md:border-x w-full p-4">
       <div className="grid h-full grid-cols-5 justify-center items-center w-full border rounded-full border-primary shadow-lg">
         {navigationItems.map((item) => {
           const isActive = pathname === item.href;
@@ -60,7 +60,7 @@ export function BottomNavigation() {
             >
               <Icon
                 className={cn(
-                  "w-8 h-8",
+                  "w-7 h-7",
                   isActive ? "text-primary" : "text-gray-500"
                 )}
               />

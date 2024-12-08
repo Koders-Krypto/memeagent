@@ -14,35 +14,11 @@ export default function SettingsPage() {
   const { address, logout } = useWeb3Auth();
   const { version, updateAvailable, updateApp } = usePWA();
   const { theme, setTheme } = useTheme();
-  const [isLoggingOut, setIsLoggingOut] = useState(false);
-
-  const handleLogout = async () => {
-    try {
-      setIsLoggingOut(true);
-      await logout();
-      toast.success("Logged out successfully");
-      router.replace("/");
-    } catch (error) {
-      console.error("Logout error:", error);
-      // toast.error("Failed to logout");
-      router.replace("/");
-    } finally {
-      setIsLoggingOut(false);
-    }
-  };
 
   return (
     <div className="w-full p-4">
-      <div className="flex flex-row justify-between items-start">
-        <h1 className="text-2xl font-bold mb-4">Settings</h1>
-        <button
-          onClick={handleLogout}
-          disabled={isLoggingOut}
-          className=" p-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          <Power size={16} />
-        </button>
-      </div>
+      <h1 className="text-2xl font-bold mb-4">Settings</h1>
+
       <div className="space-y-4">
         <div className="p-4 border border-primary rounded-lg">
           <h2 className="text-xl font-semibold mb-2">Account</h2>
@@ -59,30 +35,33 @@ export default function SettingsPage() {
               <div className="flex space-x-2">
                 <button
                   onClick={() => setTheme("light")}
-                  className={`p-2 rounded-lg flex items-center space-x-1 ${theme === "light"
-                    ? "bg-primary text-black"
-                    : "bg-gray-100 text-black"
-                    }`}
+                  className={`p-2 rounded-lg flex items-center space-x-1 ${
+                    theme === "light"
+                      ? "bg-primary text-black"
+                      : "bg-gray-100 text-black"
+                  }`}
                 >
                   <Sun size={16} />
                   <span>Light</span>
                 </button>
                 <button
                   onClick={() => setTheme("dark")}
-                  className={`p-2 rounded-lg flex items-center space-x-1 ${theme === "dark"
-                    ? "bg-primary text-black"
-                    : "bg-gray-100 text-black"
-                    }`}
+                  className={`p-2 rounded-lg flex items-center space-x-1 ${
+                    theme === "dark"
+                      ? "bg-primary text-black"
+                      : "bg-gray-100 text-black"
+                  }`}
                 >
                   <Moon size={16} />
                   <span>Dark</span>
                 </button>
                 <button
                   onClick={() => setTheme("system")}
-                  className={`p-2 rounded-lg flex items-center space-x-1 ${theme === "system"
-                    ? "bg-primary text-black"
-                    : "bg-gray-100 text-black"
-                    }`}
+                  className={`p-2 rounded-lg flex items-center space-x-1 ${
+                    theme === "system"
+                      ? "bg-primary text-black"
+                      : "bg-gray-100 text-black"
+                  }`}
                 >
                   <Monitor size={16} />
                   <span>System</span>

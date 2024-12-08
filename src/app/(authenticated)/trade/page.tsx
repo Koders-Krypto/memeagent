@@ -5,8 +5,18 @@ import { ArrowUpDownIcon } from "lucide-react";
 // Dummy token data
 const tokens = [
   { symbol: "ETH", name: "Ethereum", balance: "0.5", url: "/images/eth.png" },
-  { symbol: "USDT", name: "Tether", balance: "1800.00", url: "/images/usdt.png" },
-  { symbol: "USDC", name: "USD Coin", balance: "2000.00", url: "/images/usdc.png" },
+  {
+    symbol: "USDT",
+    name: "Tether",
+    balance: "1800.00",
+    url: "/images/usdt.png",
+  },
+  {
+    symbol: "USDC",
+    name: "USD Coin",
+    balance: "2000.00",
+    url: "/images/usdc.png",
+  },
   {
     symbol: "Dodge",
     name: "Dodge Count",
@@ -91,7 +101,9 @@ export default function TradePage() {
     const fromBalance = parseFloat(fromToken.balance);
     const toBalance = parseFloat(toToken.balance);
     const rate = toBalance / fromBalance;
-    return `1 ${fromToken.symbol} = ${rate.toLocaleString(undefined, { maximumFractionDigits: 2 })} ${toToken.symbol}`;
+    return `1 ${fromToken.symbol} = ${rate.toLocaleString(undefined, {
+      maximumFractionDigits: 2,
+    })} ${toToken.symbol}`;
   };
 
   return (
@@ -107,7 +119,7 @@ export default function TradePage() {
               </label>
               <div className="flex gap-2">
                 <button
-                  className="flex items-center gap-2 p-3 border rounded-lg dark:bg-gray-700 dark:border-gray-600 min-w-[140px]"
+                  className="flex items-center gap-2 p-3 border rounded-lg dark:bg-gray-700 dark:border-gray-600 md:min-w-[140px]"
                   onClick={() => setShowFromTokens(!showFromTokens)}
                 >
                   <div className="flex items-center justify-center w-6 h-6 bg-gray-200 rounded-full">
@@ -145,7 +157,7 @@ export default function TradePage() {
                 onClick={handleSwitch}
                 className="p-2 rounded-full border border-primary hover:bg-gray-100 dark:hover:bg-gray-700"
               >
-                <ArrowUpDownIcon className="w-4 h-4 text-primary" />
+                <ArrowUpDownIcon className="w-6 h-6 text-primary" />
               </button>
             </div>
 
@@ -156,7 +168,7 @@ export default function TradePage() {
               </label>
               <div className="flex gap-2">
                 <button
-                  className="flex items-center gap-2 p-3 border rounded-lg dark:bg-gray-700 dark:border-gray-600 min-w-[140px]"
+                  className="flex items-center gap-2 p-3 border rounded-lg dark:bg-gray-700 dark:border-gray-600 md:min-w-[140px]"
                   onClick={() => setShowToTokens(!showToTokens)}
                 >
                   <div className="flex items-center justify-center w-6 h-6 bg-gray-200 rounded-full">
@@ -194,11 +206,15 @@ export default function TradePage() {
                 <span>{calculateRate()}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600 dark:text-gray-400">Slippage</span>
+                <span className="text-gray-600 dark:text-gray-400">
+                  Slippage
+                </span>
                 <span>0.5%</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600 dark:text-gray-400">Network Fee</span>
+                <span className="text-gray-600 dark:text-gray-400">
+                  Network Fee
+                </span>
                 <span>~$5.00</span>
               </div>
             </div>
