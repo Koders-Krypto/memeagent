@@ -57,7 +57,6 @@ export function LangChainProvider({ children }: { children: React.ReactNode }) {
         const { messages } = state;
         const lastMessage = messages[messages.length - 1];
         if ("tool_calls" in lastMessage && Array.isArray(lastMessage.tool_calls) && lastMessage.tool_calls?.length) {
-            console.log("tool_calls", lastMessage.tool_calls)
             return "tools";
         }
         return END;
